@@ -39,7 +39,7 @@ The easiest way to reproduce the results is to run the Jupyter Notebook in Googl
 ## 🧠 Theory of Operation
 
 ### 1. The Poison Engine (Gradient Starvation)
-Surveillance models are lazy. They look for the easiest feature to classify. Cognitive Canary exploits this by generating **Lissajous Curves**—mathematically perfect loops—and masking them with **Gaussian noise** tuned to 8-12Hz (Human Physiological Tremor).
+Surveillance models are lazy. They look for the easiest feature to classify. Cognitive Canary exploits this by generating **Lissajous Curves**—mathematically perfect loops—and masking them with **Uniform noise** calibrated to mimic Human Physiological Tremor.
 
 The surveillance model learns to classify the "smoothness" of the curve as human, ignoring the underlying lack of semantic intent. This is known as **Gradient Starvation**.
 
@@ -65,9 +65,10 @@ The notebook also generates `neuro_shield.circom`. This is a template for a **Ze
 ## 📂 Repository Structure
 
 ```text
-├── Cognitive_Canary_v5.ipynb   # The Main Research Kernel (Run this)
-├── artifacts/
-│   ├── neuro_shield.circom     # Generated ZK-Circuit
-│   ├── surveillance_model.pkl  # The trained adversary (for testing)
-│   └── README.md               # Generated Manifesto
-└── README.md                   # This file
+├── aritfex_apart_defense_CC.ipynb   # The Main Research Kernel (Run this)
+├── README.md                        # This file
+└── (Generated at runtime to Google Drive):
+    ├── neuro_shield.circom          # Generated ZK-Circuit
+    ├── surveillance_model.joblib    # The trained adversary (for testing)
+    ├── scaler.joblib                # Normalization parameters
+    └── README.md                    # Generated Manifesto
