@@ -1,4 +1,4 @@
-# ☢️ Cognitive Canary: Active Defense Against Neural Inference
+#  Cognitive Canary: Active Defense Against Neural Inference
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1Fm4-aQkAzqazirgdhQ6OVCtR8HQXwTyq#scrollTo=eqpOD7_c_STz)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -8,6 +8,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > **"We didn't hack the password. We hacked the inference."**
+
+all rights reserved, artifex labs 2026 
 
 ---
 
