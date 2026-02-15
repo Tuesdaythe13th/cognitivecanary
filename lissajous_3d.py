@@ -31,27 +31,39 @@ from typing import Tuple, Optional, Dict
 from dataclasses import dataclass
 import warnings
 
+# Import shared utilities (v6.0)
+from spectral_utils import compute_spectral_entropy, normalize_signal
+from noise_generators import generate_uniform_jitter
+from constants import (
+    TREMOR_BAND_PHYSIOLOGIC,
+    LISSAJOUS_FREQ_A, LISSAJOUS_FREQ_B, LISSAJOUS_FREQ_C,
+    LISSAJOUS_PHASE_X, LISSAJOUS_PHASE_Z,
+    LISSAJOUS_JITTER_PERCENTAGE,
+    SPECTRAL_ENTROPY_TARGET,
+    Z_AXIS_SCROLL_PROBABILITY, Z_AXIS_ZOOM_PROBABILITY
+)
+
 
 @dataclass
 class Canary3DConfig:
     """Configuration parameters for 3D adversarial cursor generation."""
 
-    # Frequency parameters (Hz)
-    TREMOR_BAND: Tuple[float, float] = (4.0, 12.0)  # Physiologic hand tremor range
+    # Frequency parameters (Hz) - imported from constants.py
+    TREMOR_BAND: Tuple[float, float] = TREMOR_BAND_PHYSIOLOGIC  # Physiologic hand tremor range (4-12 Hz)
 
-    # 3D Lissajous curve parameters (coprime triplet)
-    FREQ_RATIO_3D: Tuple[int, int, int] = (13, 8, 5)  # Coprime for maximal ergodicity
-    PHASE_OFFSET_X: float = np.pi / 2  # X-axis phase shift
-    PHASE_OFFSET_Z: float = np.pi / 4  # Z-axis phase shift (scroll/zoom)
+    # 3D Lissajous curve parameters (coprime triplet) - imported from constants.py
+    FREQ_RATIO_3D: Tuple[int, int, int] = (LISSAJOUS_FREQ_A, LISSAJOUS_FREQ_B, LISSAJOUS_FREQ_C)  # (13, 8, 5) coprime for maximal ergodicity
+    PHASE_OFFSET_X: float = LISSAJOUS_PHASE_X  # X-axis phase shift (π/2)
+    PHASE_OFFSET_Z: float = LISSAJOUS_PHASE_Z  # Z-axis phase shift (π/4 for scroll/zoom)
 
-    # Noise injection
-    JITTER_AMPLITUDE_XY: float = 0.02  # ±2% for cursor (mimics motor variance)
-    JITTER_AMPLITUDE_Z: float = 0.03   # ±3% for scroll/zoom (more variance acceptable)
-    ENTROPY_TARGET: float = 3.2        # Target spectral entropy (nats)
+    # Noise injection - imported from constants.py
+    JITTER_AMPLITUDE_XY: float = LISSAJOUS_JITTER_PERCENTAGE / 100.0  # ±2% for cursor (mimics motor variance)
+    JITTER_AMPLITUDE_Z: float = (LISSAJOUS_JITTER_PERCENTAGE * 1.5) / 100.0   # ±3% for scroll/zoom (more variance acceptable)
+    ENTROPY_TARGET: float = SPECTRAL_ENTROPY_TARGET  # Target spectral entropy (3.2 nats)
 
-    # Z-axis mapping
-    Z_SCROLL_WEIGHT: float = 0.7       # 70% scroll events
-    Z_ZOOM_WEIGHT: float = 0.3         # 30% zoom events
+    # Z-axis mapping - imported from constants.py
+    Z_SCROLL_WEIGHT: float = Z_AXIS_SCROLL_PROBABILITY  # 70% scroll events
+    Z_ZOOM_WEIGHT: float = Z_AXIS_ZOOM_PROBABILITY      # 30% zoom events
     SCROLL_QUANTUM: int = 120          # Scroll units per detent (Windows standard)
     ZOOM_STEP: float = 0.1             # Zoom increment (10%)
 
@@ -134,17 +146,17 @@ class Lissajous3DEngine:
         y = np.sin(freq_y * t)
         z = np.sin(freq_z * t + self.config.PHASE_OFFSET_Z)
 
-        # Normalize X/Y to canvas bounds
-        x = self._normalize_signal(x, self.config.CANVAS_BOUNDS)
-        y = self._normalize_signal(y, self.config.CANVAS_BOUNDS)
+        # Normalize X/Y to canvas bounds using shared utility
+        x = normalize_signal(x, target_range=self.config.CANVAS_BOUNDS)
+        y = normalize_signal(y, target_range=self.config.CANVAS_BOUNDS)
 
-        # Normalize Z to [-1, 1] range
-        z = self._normalize_signal(z, self.config.Z_BOUNDS)
+        # Normalize Z to [-1, 1] range using shared utility
+        z = normalize_signal(z, target_range=self.config.Z_BOUNDS)
 
-        # Inject physiologic jitter (independent per axis)
-        x += self._generate_jitter(target_points, self.config.JITTER_AMPLITUDE_XY)
-        y += self._generate_jitter(target_points, self.config.JITTER_AMPLITUDE_XY)
-        z += self._generate_jitter(target_points, self.config.JITTER_AMPLITUDE_Z)
+        # Inject physiologic jitter using shared utility (independent per axis)
+        x += generate_uniform_jitter(target_points, amplitude=2 * self.config.JITTER_AMPLITUDE_XY)
+        y += generate_uniform_jitter(target_points, amplitude=2 * self.config.JITTER_AMPLITUDE_XY)
+        z += generate_uniform_jitter(target_points, amplitude=2 * self.config.JITTER_AMPLITUDE_Z)
 
         # Clip to bounds (safety)
         x = np.clip(x, *self.config.CANVAS_BOUNDS)
@@ -162,21 +174,6 @@ class Lissajous3DEngine:
             result['zoom_events'] = zoom_events
 
         return result
-
-    def _normalize_signal(self, signal: np.ndarray, bounds: Tuple[float, float]) -> np.ndarray:
-        """Normalize signal from [-1, 1] to specified bounds."""
-        normalized = (signal + 1) / 2  # Map [-1, 1] -> [0, 1]
-        min_bound, max_bound = bounds
-        return normalized * (max_bound - min_bound) + min_bound
-
-    def _generate_jitter(self, n_points: int, amplitude: float) -> np.ndarray:
-        """
-        Generate physiologically-plausible jitter.
-
-        Uses uniform distribution to match the spectral signature of
-        essential tremor (8-12 Hz baseline) + cognitive stress (4-8 Hz).
-        """
-        return np.random.uniform(-amplitude, amplitude, n_points)
 
     def _discretize_z_axis(
         self,
@@ -235,29 +232,6 @@ class Lissajous3DEngine:
 
         return scroll_events, zoom_events
 
-    def compute_spectral_entropy(self, signal: np.ndarray) -> float:
-        """
-        Compute spectral entropy of a signal (diagnostic tool).
-
-        Args:
-            signal: 1D time-domain signal
-
-        Returns:
-            Spectral entropy in nats
-        """
-        from scipy import signal as sp_signal
-
-        # Compute power spectral density
-        freqs, psd = sp_signal.welch(signal, nperseg=min(len(signal), 64))
-
-        # Normalize PSD to probability distribution
-        psd_norm = psd / np.sum(psd)
-
-        # Compute Shannon entropy
-        entropy = -np.sum(psd_norm * np.log(psd_norm + 1e-10))
-
-        return entropy
-
     def verify_biomimicry_3d(self, path: np.ndarray) -> dict:
         """
         Verify that generated 3D path matches human motor statistics.
@@ -274,10 +248,10 @@ class Lissajous3DEngine:
         dz = np.diff(path[:, 2])
         velocity_3d = np.sqrt(dx**2 + dy**2 + dz**2)
 
-        # Compute spectral entropy for each axis
-        entropy_x = self.compute_spectral_entropy(path[:, 0])
-        entropy_y = self.compute_spectral_entropy(path[:, 1])
-        entropy_z = self.compute_spectral_entropy(path[:, 2])
+        # Compute spectral entropy for each axis using shared utility
+        entropy_x = compute_spectral_entropy(path[:, 0], fs=100.0)
+        entropy_y = compute_spectral_entropy(path[:, 1], fs=100.0)
+        entropy_z = compute_spectral_entropy(path[:, 2], fs=100.0)
 
         # Check coprimality preservation (ergodic coverage)
         freq_ratio = self.config.FREQ_RATIO_3D
