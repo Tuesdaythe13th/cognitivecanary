@@ -1,0 +1,41 @@
+# Cognitive Canary v6.0 - Neural Inference Defense System
+# Core Dependencies
+
+# Numerical Computing
+numpy>=1.24.0,<2.0.0
+scipy>=1.10.0,<2.0.0
+
+# Signal Processing & Analysis
+# (included in scipy, but explicitly noted for clarity)
+
+# Machine Learning Utilities (minimal, for feature extraction only)
+scikit-learn>=1.2.0,<2.0.0
+
+# Visualization (optional, for notebooks and diagnostics)
+matplotlib>=3.7.0,<4.0.0
+
+# Progress Bars & UI
+tqdm>=4.65.0,<5.0.0
+
+# Development Dependencies (optional, uncomment for development)
+# pytest>=7.3.0,<8.0.0
+# pytest-cov>=4.1.0,<5.0.0
+# black>=23.3.0,<24.0.0
+# flake8>=6.0.0,<7.0.0
+# mypy>=1.3.0,<2.0.0
+
+# Optional: Deep Learning (for Task Classifier v2 CNN implementation)
+# torch>=2.0.0,<3.0.0  # Uncomment if using CNN classifier instead of rule-based
+
+# Optional: Zero-Knowledge Proofs (for neuro_shield.circom integration)
+# py-crypto>=0.4.0  # Uncomment if integrating Halo2 verifier
+
+# Optional: Jupyter Notebook Support
+# jupyter>=1.0.0,<2.0.0
+# ipykernel>=6.23.0,<7.0.0
+# ipywidgets>=8.0.0,<9.0.0
+
+# Platform-Specific Notes:
+# - All core dependencies are cross-platform (Linux, macOS, Windows)
+# - For optimal performance on Apple Silicon, use: pip install --pre torch torchvision
+# - For CUDA support (NVIDIA GPUs), see: https://pytorch.org/get-started/locally/
