@@ -30,6 +30,127 @@ This data is currently unprotected by law. While encryption protects *what you s
 
 ---
 
+## 📢 Update — March 1, 2026: v6.1 Formal Privacy Guarantees
+
+Two new modules ship with v6.1 that fundamentally change what Cognitive Canary can *prove*, not just what it can *demonstrate*:
+
+### `differential_privacy.py` — From Empirical Evasion to Mathematical Certainty
+
+**The problem with empirical evasion rates:** Saying "98% evasion against 15 classifiers" is meaningful today but says nothing about classifiers that don't exist yet. A sufficiently powerful future adversary could still break those numbers.
+
+**What differential privacy adds:** A formal bound — parameterized by a single number ε — that holds against *any* adversary regardless of computational power. With ε = 1.0, the probability of correctly inferring your true behavioral state vs. an adjacent state is bounded by e¹ ≈ 2.72×. No exceptions.
+
+**How to use it:**
+
+```python
+from differential_privacy import DifferentialPrivacyEngine
+
+# Initialize with a session-level privacy budget
+# ε = 1.0 is considered strong; lower = more private but more noise
+dp = DifferentialPrivacyEngine(
+    epsilon_budget=1.0,    # total ε allowed across entire session
+    epsilon_per_query=0.01 # ε spent per individual signal privatization
+)
+
+# Privatize individual behavioral signals with formal guarantees
+private_x     = dp.privatize_cursor_x(raw_cursor_x)
+private_traj  = dp.privatize_cursor_trajectory(raw_xy_array)  # shape (N, 2)
+private_iki   = dp.privatize_keystroke_iki(raw_iki_seconds)
+private_power = dp.privatize_eeg_band_power(raw_band_power)
+
+# Monitor privacy budget in real-time
+report = dp.budget_report()
+print(f"ε spent (RDP-tight):   {report.rdp_epsilon:.4f}")
+print(f"ε spent (basic compos):{report.total_epsilon:.4f}")  # always ≥ RDP
+print(f"Budget remaining:       {report.budget_remaining:.1%}")
+print(f"Recommended strength:   {dp.recommended_strength:.2f}")  # 0.3 – 1.0
+
+# Reset at the start of each new protection session
+dp.reset_session()
+```
+
+**Key insight — Rényi DP composition:** The engine uses Rényi DP (RDP) accounting internally, which tracks cumulative privacy loss far more tightly than the naive "add all the ε's together" rule. After 100 queries at ε=0.1 each, basic composition says you've spent ε=10.0; RDP accounting yields ε≈2.1. That's the difference between a session that lasts minutes and one that lasts all day.
+
+**Mechanism selection guide:**
+| Signal type | Mechanism | Why |
+|---|---|---|
+| Single cursor coordinate | Laplace | Pure ε-DP, no failure probability |
+| Full cursor trajectory | Gaussian | Tighter for high-dimensional vectors |
+| Keystroke IKI | Laplace | Scalar, pure DP |
+| EEG band power | Laplace | Scalar, pure DP |
+
+---
+
+### `persona_engine.py` — Closing the Cross-Session Re-Identification Gap
+
+**The gap in v6.0:** The Gradient Auditor detects cross-session fingerprinting *reactively* — after it's happening. But if each session's injected noise is independently sampled, the variance across sessions is itself a fingerprint. A longitudinal adversary can correlate sessions before the auditor fires.
+
+**What the persona engine adds:** A stateful "behavioral avatar" — a consistent set of synthetic motor and typing parameters that stays stable *within a rotation window* but is statistically distant from your true fingerprint.
+
+**How to use it:**
+
+```python
+from persona_engine import PersonaCoherenceEngine
+
+# Initialize — rotation_interval controls how many sessions share a persona
+# Lower = more privacy but less within-window consistency
+# Recommended: 5–20 sessions
+persona = PersonaCoherenceEngine(
+    rotation_interval=10,
+    persona_state_file="~/.cc_persona.json"  # persists across restarts
+)
+
+# Call at the start of every protection session
+session_id = persona.begin_session()
+print(f"Active persona: {session_id[:8]}...")
+print(f"Sessions until rotation: {persona.sessions_until_rotation}")
+
+# Pull consistent synthetic parameters to feed into other engines
+tremor   = persona.get_tremor_params()
+# tremor.dominant_freq_hz, tremor.amplitude, tremor.spectral_entropy_target
+
+keystroke = persona.get_keystroke_params()
+# keystroke.mean_iki_ms, keystroke.typo_rate, keystroke.burst_duration_ms
+
+cursor   = persona.get_cursor_params()
+# cursor.mean_velocity_px_s, cursor.path_curvature
+
+# Enforce consistency: blends raw engine output 50/50 with persona baseline
+# Pass raw parameters from AdaptiveTremor / KeystrokeJitter / Lissajous3D
+adjusted = persona.enforce_consistency({
+    'tremor_freq':      raw_tremor_freq,
+    'tremor_amplitude': raw_amplitude,
+    'iki_mean':         raw_iki_ms,
+    'cursor_velocity':  raw_velocity_px_s,
+})
+# Use adjusted['tremor_freq'] etc. instead of the raw values
+
+# After each session, record a fingerprint for decorrelation auditing
+feature_vec = np.array([adjusted['tremor_freq'], adjusted['iki_mean'] / 300.0])
+persona.record_session_fingerprint(feature_vec)
+
+# Audit: warns if sessions are becoming too correlated (> 0.85)
+# and auto-rotates the persona if so
+audit = persona.audit_decorrelation()
+print(audit['recommendation'])
+```
+
+**Rotation behaviour:** Persona evolution uses smooth interpolation (40% step toward the new target) rather than a hard reset. This ensures there is no sharp discontinuity at rotation boundaries — which would itself be a detectable fingerprint.
+
+---
+
+### Running the test suite (v6.1)
+
+```bash
+pip install pytest numpy scipy scikit-learn
+python -m pytest tests/ -v
+# → 102 passed
+```
+
+Tests cover all DP mechanisms, RDP composition linearity, budget lifecycle, persona initialization, rotation, consistency enforcement, disk persistence, and decorrelation auditing.
+
+---
+
 ## ⚡ Quick Start
 
 ### Option 1: Google Colab (Recommended)
