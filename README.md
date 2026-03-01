@@ -274,7 +274,10 @@ The system supports `neuro_shield.circom` generation for **Zero-Knowledge Proof 
 - ✅ Productivity failsafe (100% usability guarantee)
 - ✅ Gradient auditor v2 (federated learning defense)
 
-### 🔄 v6.1 (Q2 2026) - "Cross-Platform"
+### 🔄 v6.1 (In Progress - Q1/Q2 2026) - "Formal Privacy Guarantees"
+- ✅ **Differential Privacy Engine** (`differential_privacy.py`) — formal ε-DP guarantees via Laplace/Gaussian mechanisms + Rényi DP accounting
+- ✅ **Persona Coherence Engine** (`persona_engine.py`) — stateful cross-session behavioral persona to prevent longitudinal re-identification
+- ✅ **Formal Test Suite** (`tests/`) — 102 pytest tests covering spectral utilities, DP engine, and persona engine
 - 🔨 Cross-device sync (BLE synchronization for iOS Continuity)
 - 🔨 Mobile SDK (iOS/Android touchscreen obfuscation)
 - 🔨 WebAssembly port (client-side browser execution)
@@ -362,6 +365,84 @@ All results in v6.0 are fully reproducible. See `cognitive_canary_v6_colab.ipynb
 - [Keystroke Jitter](keystroke_jitter.py) - Cascaded keyboard obfuscation
 - [Task Classifier v2](task_classifier_v2.py) - Context detection & failsafe
 - [Gradient Auditor v2](gradient_auditor.py) - ML attack monitoring
+- [Differential Privacy Engine](differential_privacy.py) ⭐ **v6.1** - Formal ε-DP guarantees
+- [Persona Coherence Engine](persona_engine.py) ⭐ **v6.1** - Cross-session identity management
+
+---
+
+## 🔬 New in v6.1: Formal Privacy Guarantees
+
+### Differential Privacy Engine (`differential_privacy.py`)
+**Impact: Converts empirical evasion rates to formal mathematical guarantees**
+
+While v6.0 provides empirical evasion metrics, v6.1 adds formal ε-differential privacy (DP):
+the probability of inferring your true behavioral state is bounded by e^ε regardless of adversary computational power.
+
+```python
+from differential_privacy import DifferentialPrivacyEngine
+
+# Initialize with ε=1.0 budget (strong privacy guarantee)
+dp = DifferentialPrivacyEngine(epsilon_budget=1.0, epsilon_per_query=0.01)
+
+# Privatize behavioral signals with formal guarantees
+private_x = dp.privatize_cursor_x(raw_cursor_x)
+private_traj = dp.privatize_cursor_trajectory(raw_trajectory)
+private_iki = dp.privatize_keystroke_iki(raw_inter_key_interval)
+
+# Monitor privacy budget in real-time
+report = dp.budget_report()
+print(f"ε spent (RDP-tight): {report.rdp_epsilon:.4f}")
+print(f"Budget remaining: {report.budget_remaining:.1%}")
+print(f"Recommended injection strength: {dp.recommended_strength:.2f}")
+```
+
+**Components:**
+- `LaplaceMechanism` - Pure ε-DP (δ=0) for scalar queries
+- `GaussianMechanism` - (ε, δ)-DP for vector/trajectory queries
+- `RenyiAccountant` - Tight composition via Rényi DP (up to √k tighter than basic composition)
+- `PrivacyBudgetTracker` - Real-time budget monitoring with auto-scaling
+- `BehavioralSensitivityEstimator` - Calibrates noise to feature sensitivity bounds
+
+---
+
+### Persona Coherence Engine (`persona_engine.py`)
+**Impact: Prevents longitudinal re-identification by maintaining a statistically consistent synthetic behavioral persona**
+
+The threat: an adversary can correlate injection noise across sessions to re-identify users even when individual sessions evade classifiers. The persona engine closes this gap.
+
+```python
+from persona_engine import PersonaCoherenceEngine
+
+# Initialize with 10-session rotation window
+persona = PersonaCoherenceEngine(rotation_interval=10, persona_state_file="~/.cc_persona")
+
+# Begin session — increments counter, triggers rotation if needed
+session_id = persona.begin_session()
+
+# Get consistent synthetic parameters for this identity window
+tremor_params = persona.get_tremor_params()     # → TremorPersonaParams
+keystroke_params = persona.get_keystroke_params() # → KeystrokePersonaParams
+cursor_params = persona.get_cursor_params()       # → CursorPersonaParams
+
+# Enforce consistency: blend raw injection params with persona baseline
+adjusted = persona.enforce_consistency({
+    'tremor_freq': raw_tremor_freq,
+    'iki_mean': raw_iki_ms,
+    'cursor_velocity': raw_velocity,
+})
+
+# Record session fingerprint for decorrelation auditing
+persona.record_session_fingerprint(session_feature_vector)
+
+# Audit: raises alert if cross-session correlation exceeds 0.85
+audit_result = persona.audit_decorrelation()
+```
+
+**Key Properties:**
+- Persona parameters stay **consistent within a rotation window** (prevents session-to-session variance fingerprinting)
+- Parameters are **biomechanically valid** (within physiologic ranges — undetectable as synthetic)
+- **Smooth rotation** via interpolation (no detectable discontinuity at rotation boundaries)
+- **Disk persistence** — persona survives process restarts for seamless multi-day consistency
 
 ---
 
@@ -486,7 +567,7 @@ This software is provided "AS IS" without warranty of any kind. The code may con
 
 ---
 
-## 📂 Repository Structure (v6.0)
+## 📂 Repository Structure (v6.1)
 
 ```text
 ├── README.md                        # This file
@@ -496,6 +577,15 @@ This software is provided "AS IS" without warranty of any kind. The code may con
 ├── keystroke_jitter.py              # ⭐ v6.0 Cascaded keystroke obfuscation
 ├── task_classifier_v2.py            # ⭐ v6.0 Context awareness + productivity failsafe
 ├── gradient_auditor.py              # ⭐ v6.0 ML attack defense (FL poisoning detection)
+├── differential_privacy.py          # ⭐ v6.1 Formal DP guarantees (Laplace/Gaussian/RDP)
+├── persona_engine.py                # ⭐ v6.1 Cross-session persona coherence
 ├── spectral_canary.py               # v5.0 EEG defense (alpha/theta injection)
-├── task_modulator.json              # Configuration profiles (stealth/balanced/maximum)
+├── spectral_utils.py                # Shared spectral analysis utilities
+├── noise_generators.py              # Shared noise generation (pink noise, jitter)
+├── constants.py                     # Centralized configuration
+├── task_modulator.json              # Injection profiles (stealth/balanced/maximum)
+├── tests/                           # ⭐ v6.1 Formal test suite (102 tests)
+│   ├── test_differential_privacy.py #   DP engine: Laplace, Gaussian, RDP accountant
+│   ├── test_persona_engine.py       #   Persona lifecycle, rotation, decorrelation audit
+│   └── test_spectral_utils.py       #   Entropy, band power, SNR, normalization
 └── cognitive_canary_v6_colab.ipynb  # ⭐ v6.0 Interactive research notebook
