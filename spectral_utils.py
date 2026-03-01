@@ -124,7 +124,11 @@ def compute_band_power(signal: np.ndarray,
     band_indices = np.logical_and(frequencies >= band[0], frequencies <= band[1])
 
     # Integrate power in the band (trapezoidal rule)
-    band_power = np.trapz(psd[band_indices], frequencies[band_indices])
+    # np.trapezoid is the preferred API in NumPy >= 2.0; np.trapz is deprecated
+    try:
+        band_power = np.trapezoid(psd[band_indices], frequencies[band_indices])
+    except AttributeError:
+        band_power = np.trapz(psd[band_indices], frequencies[band_indices])  # type: ignore[attr-defined]
 
     return float(band_power)
 
