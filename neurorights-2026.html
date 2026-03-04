@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neurotechnology and the Cognitive Sovereignty of the Mind — February 2026</title>
+  <style>
+    /* ── Reset & Base ────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:        #050510;
+      --bg2:       #0a0a20;
+      --bg3:       #0f0f2a;
+      --green:     #00ff88;
+      --cyan:      #00d4ff;
+      --white:     #e8eaf6;
+      --muted:     #7b82b0;
+      --border:    rgba(0,212,255,0.18);
+      --card-bg:   rgba(10,10,32,0.85);
+      --radius:    10px;
+      --font:      'Segoe UI', system-ui, -apple-system, sans-serif;
+      --mono:      'Consolas', 'Courier New', monospace;
+    }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: var(--font);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+    a { color: var(--cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    h2 { font-size: 1.75rem; margin-bottom: 0.5rem; }
+    h3 { font-size: 1.2rem; margin-bottom: 0.4rem; }
+    p  { margin-bottom: 1rem; color: #c0c8e8; }
+
+    /* ── Scrollbar ───────────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ── Nav ─────────────────────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(5,5,16,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      padding: 0 2rem;
+      height: 54px;
+      flex-wrap: wrap;
+    }
+    nav .nav-back {
+      color: var(--muted);
+      font-size: 0.85rem;
+      white-space: nowrap;
+      transition: color 0.2s;
+    }
+    nav .nav-back:hover { color: var(--cyan); text-decoration: none; }
+    nav .nav-brand {
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: var(--green);
+      white-space: nowrap;
+      margin-right: auto;
+    }
+    nav .nav-links {
+      display: flex;
+      gap: 1.1rem;
+      list-style: none;
+      flex-wrap: wrap;
+    }
+    nav .nav-links a {
+      color: var(--muted);
+      font-size: 0.8rem;
+      letter-spacing: 0.04em;
+      transition: color 0.2s;
+      white-space: nowrap;
+    }
+    nav .nav-links a:hover { color: var(--cyan); text-decoration: none; }
+
+    /* ── Sections ────────────────────────────────────────────────────── */
+    section { padding: 5rem 2rem; max-width: 1060px; margin: 0 auto; }
+    .section-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--green);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+      font-family: var(--mono);
+    }
+    .section-title {
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(135deg, var(--white) 0%, var(--cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: var(--border);
+      margin: 0;
+    }
+
+    /* ── Hero ────────────────────────────────────────────────────────── */
+    #hero {
+      max-width: 100%;
+      padding: 0;
+      position: relative;
+      overflow: hidden;
+      min-height: 520px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,212,255,0.07) 0%, transparent 70%),
+                  radial-gradient(ellipse 50% 40% at 80% 80%, rgba(0,255,136,0.05) 0%, transparent 60%),
+                  var(--bg);
+    }
+    .hero-eeg {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 160px;
+      opacity: 0.35;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 4rem 2rem 6rem;
+      max-width: 900px;
+    }
+    .hero-eyebrow {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.25em;
+      color: var(--green);
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .hero-title {
+      font-size: clamp(1.8rem, 4.5vw, 3.2rem);
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(135deg, #ffffff 0%, #a0e8ff 50%, var(--green) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-sub {
+      font-size: 1.05rem;
+      color: #8090c0;
+      max-width: 620px;
+      margin: 0 auto 2rem;
+      line-height: 1.6;
+    }
+    .badge {
+      display: inline-block;
+      background: linear-gradient(90deg, rgba(0,212,255,0.15), rgba(0,255,136,0.12));
+      border: 1px solid rgba(0,212,255,0.35);
+      border-radius: 50px;
+      padding: 0.35rem 1.1rem;
+      font-size: 0.78rem;
+      font-family: var(--mono);
+      letter-spacing: 0.1em;
+      color: var(--cyan);
+    }
+
+    /* EEG Wave Animation */
+    @keyframes eegScroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    .eeg-path {
+      animation: eegScroll 8s linear infinite;
+    }
+
+    /* ── Stat Cards ──────────────────────────────────────────────────── */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.2rem;
+      margin: 2rem 0;
+    }
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.4rem 1.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.2s;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 100%;
+      background: linear-gradient(180deg, var(--cyan), var(--green));
+    }
+    .stat-card:hover { border-color: rgba(0,212,255,0.45); transform: translateY(-2px); }
+    .stat-number {
+      font-size: 2.2rem;
+      font-weight: 800;
+      font-family: var(--mono);
+      color: var(--green);
+      line-height: 1;
+      margin-bottom: 0.3rem;
+    }
+    .stat-unit { font-size: 1rem; color: var(--cyan); }
+    .stat-label {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+    .stat-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 0.2rem;
+    }
+
+    /* ── Tables ──────────────────────────────────────────────────────── */
+    .table-wrap { overflow-x: auto; margin: 2rem 0; border-radius: var(--radius); }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+    thead tr { background: rgba(0,212,255,0.08); }
+    thead th {
+      padding: 0.9rem 1rem;
+      text-align: left;
+      color: var(--cyan);
+      font-weight: 600;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      border-bottom: 1px solid var(--border);
+    }
+    tbody tr {
+      border-bottom: 1px solid rgba(0,212,255,0.07);
+      transition: background 0.15s;
+    }
+    tbody tr:hover { background: rgba(0,212,255,0.04); }
+    tbody td {
+      padding: 0.8rem 1rem;
+      color: #c0c8e8;
+      vertical-align: top;
+    }
+    tbody td:first-child { color: var(--white); font-weight: 500; }
+    .tag {
+      display: inline-block;
+      padding: 0.15rem 0.55rem;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-family: var(--mono);
+      margin: 0.1rem;
+    }
+    .tag-green { background: rgba(0,255,136,0.1); color: var(--green); border: 1px solid rgba(0,255,136,0.25); }
+    .tag-cyan  { background: rgba(0,212,255,0.1); color: var(--cyan);  border: 1px solid rgba(0,212,255,0.25); }
+    .tag-red   { background: rgba(255,80,80,0.1); color: #ff8080;      border: 1px solid rgba(255,80,80,0.25); }
+    .tag-amber { background: rgba(255,200,0,0.1); color: #ffc800;      border: 1px solid rgba(255,200,0,0.25); }
+
+    /* ── Market Chart ────────────────────────────────────────────────── */
+    .chart-wrap {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+    .chart-title {
+      font-size: 0.8rem;
+      font-family: var(--mono);
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      margin-bottom: 1.5rem;
+      text-transform: uppercase;
+    }
+    .bar-chart { display: flex; flex-direction: column; gap: 0.85rem; }
+    .bar-row { display: flex; align-items: center; gap: 1rem; }
+    .bar-year {
+      width: 3.2rem;
+      font-size: 0.78rem;
+      font-family: var(--mono);
+      color: var(--muted);
+      flex-shrink: 0;
+      text-align: right;
+    }
+    .bar-track {
+      flex: 1;
+      height: 24px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      width: 0;
+      transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+    .bar-fill::after {
+      content: attr(data-value);
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.72rem;
+      font-family: var(--mono);
+      color: rgba(5,5,16,0.9);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .bar-fill-past  { background: linear-gradient(90deg, #1a6040, var(--green)); }
+    .bar-fill-proj  { background: linear-gradient(90deg, #004466, var(--cyan)); opacity: 0.85; }
+
+    /* ── Threat Cards ────────────────────────────────────────────────── */
+    .threat-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      margin: 2rem 0;
+    }
+    .threat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.4rem 1.6rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .threat-card:hover { border-color: rgba(255,80,80,0.35); }
+    .threat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.7rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .threat-name {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--white);
+    }
+    .threat-pct {
+      font-family: var(--mono);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #ff8080;
+    }
+    .threat-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 0.9rem;
+      line-height: 1.5;
+    }
+    .threat-track {
+      height: 6px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .threat-fill {
+      height: 100%;
+      border-radius: 3px;
+      width: 0;
+      transition: width 1.3s cubic-bezier(0.4, 0, 0.2, 1);
+      background: linear-gradient(90deg, rgba(255,60,60,0.6), #ff8080);
+    }
+
+    /* ── Timeline ────────────────────────────────────────────────────── */
+    .timeline {
+      position: relative;
+      padding: 1rem 0;
+      margin: 2rem 0;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 20px;
+      top: 0; bottom: 0;
+      width: 2px;
+      background: linear-gradient(180deg, var(--cyan), var(--green));
+      opacity: 0.3;
+    }
+    .tl-item {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      opacity: 0;
+      transform: translateX(-20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      position: relative;
+    }
+    .tl-item.visible { opacity: 1; transform: translateX(0); }
+    .tl-dot {
+      flex-shrink: 0;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--bg3);
+      border: 2px solid var(--cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--cyan);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      z-index: 1;
+    }
+    .tl-content {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.2rem;
+      flex: 1;
+    }
+    .tl-year {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--green);
+      margin-bottom: 0.25rem;
+      letter-spacing: 0.1em;
+    }
+    .tl-heading {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 0.3rem;
+    }
+    .tl-body {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    /* ── Defense Table ───────────────────────────────────────────────── */
+    .defense-table tbody td:nth-child(3) {
+      color: var(--green);
+      font-family: var(--mono);
+      font-size: 0.82rem;
+    }
+
+    /* ── Horizon Cards ───────────────────────────────────────────────── */
+    .horizon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.2rem;
+      margin: 2rem 0;
+    }
+    .horizon-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.4rem;
+      transition: border-color 0.3s;
+    }
+    .horizon-card:hover { border-color: rgba(0,255,136,0.3); }
+    .horizon-year {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--green);
+      letter-spacing: 0.15em;
+      margin-bottom: 0.5rem;
+    }
+    .horizon-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 0.5rem;
+    }
+    .horizon-body {
+      font-size: 0.83rem;
+      color: var(--muted);
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    /* ── References ──────────────────────────────────────────────────── */
+    .ref-list {
+      list-style: none;
+      counter-reset: ref-counter;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+    }
+    .ref-list li {
+      counter-increment: ref-counter;
+      display: flex;
+      gap: 0.9rem;
+      font-size: 0.83rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .ref-list li::before {
+      content: '[' counter(ref-counter) ']';
+      font-family: var(--mono);
+      color: var(--cyan);
+      flex-shrink: 0;
+      font-size: 0.75rem;
+      margin-top: 0.05rem;
+      min-width: 2.4rem;
+    }
+
+    /* ── Footer ──────────────────────────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 3rem 2rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-family: var(--mono);
+      letter-spacing: 0.05em;
+    }
+    footer span { color: var(--green); }
+
+    /* ── Utility ─────────────────────────────────────────────────────── */
+    .text-green  { color: var(--green); }
+    .text-cyan   { color: var(--cyan); }
+    .text-muted  { color: var(--muted); }
+    .mt1 { margin-top: 1rem; }
+    .mb2 { margin-bottom: 2rem; }
+    .fade-in {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+    }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── Responsive ──────────────────────────────────────────────────── */
+    @media (max-width: 640px) {
+      nav { gap: 0.8rem; padding: 0 1rem; }
+      nav .nav-links { display: none; }
+      section { padding: 3.5rem 1.2rem; }
+      .hero-content { padding: 3rem 1.2rem 5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Nav ───────────────────────────────────────────────────────────── -->
+<nav>
+  <a class="nav-back" href="../">&#8592; Back to Demos</a>
+  <span class="nav-brand">&#9670; Cognitive Canary</span>
+  <ul class="nav-links">
+    <li><a href="#inflection">01 Inflection</a></li>
+    <li><a href="#bci">02 BCI Frontier</a></li>
+    <li><a href="#threats">03 Threats</a></li>
+    <li><a href="#legal">04 Legal</a></li>
+    <li><a href="#defense">05 Defense</a></li>
+    <li><a href="#horizon">06 Horizon</a></li>
+    <li><a href="#references">07 References</a></li>
+  </ul>
+</nav>
+
+<!-- ── Hero ──────────────────────────────────────────────────────────── -->
+<div id="hero">
+  <div class="hero-content">
+    <div class="hero-eyebrow">Whitepaper &nbsp;&#8212;&nbsp; Cognitive Canary Research</div>
+    <h1 class="hero-title">Neurotechnology and the<br>Cognitive Sovereignty of the Mind</h1>
+    <p class="hero-sub">
+      A technical and policy analysis of brain-computer interface proliferation, emergent neural privacy risks,
+      and the systems needed to defend human cognitive autonomy in the decade ahead.
+    </p>
+    <span class="badge">February 2026</span>
+  </div>
+
+  <!-- Animated EEG SVG -->
+  <svg class="hero-eeg" viewBox="0 0 2400 160" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <g class="eeg-path">
+      <!-- Two identical copies side by side for seamless loop -->
+      <polyline
+        fill="none"
+        stroke="url(#eegGrad)"
+        stroke-width="1.8"
+        stroke-linejoin="round"
+        stroke-linecap="round"
+        points="
+          0,80 30,80 40,80 50,78 55,75 60,65 65,40 70,20 75,10 80,30 85,70 90,95 95,110 100,105
+          110,80 130,80 140,78 148,74 152,60 156,38 160,18 164,8  168,28 172,68 176,92 180,108
+          184,100 190,80 220,80 235,78 242,72 248,52 254,30 258,15 262,6  266,25 270,65 274,90
+          278,105 282,98 290,80 330,80 345,79 352,74 356,62 360,44 364,22 368,12 372,32 376,70
+          380,94 384,108 388,102 395,80 440,80 450,78 456,72 462,50 466,28 470,14 474,5  478,24
+          482,64 486,89 490,106 494,99 500,80 540,80 555,79 562,74 568,58 572,38 576,20 580,10
+          584,30 588,70 592,95 596,110 600,104 607,80 650,80 660,78 666,72 672,50 676,28 680,14
+          684,5  688,24 692,64 696,89 700,106 704,99 710,80 750,80 760,78 768,74 774,56 778,34
+          782,18 786,8  790,28 794,68 798,92 802,108 806,100 814,80
+          840,80 860,80 870,78 878,74 882,60 886,40 890,20 894,10 898,30 902,70 906,94 910,108
+          914,102 920,80 960,80 970,78 976,72 982,52 986,30 990,15 994,6  998,25 1002,65
+          1006,90 1010,105 1014,98 1020,80 1060,80 1080,80 1090,78 1098,74 1102,62 1106,44
+          1110,22 1114,12 1118,32 1122,70 1126,94 1130,108 1134,102 1142,80 1200,80
+        "
+      />
+      <!-- Repeat for seamless scroll -->
+      <polyline
+        fill="none"
+        stroke="url(#eegGrad)"
+        stroke-width="1.8"
+        stroke-linejoin="round"
+        stroke-linecap="round"
+        points="
+          1200,80 1230,80 1240,80 1250,78 1255,75 1260,65 1265,40 1270,20 1275,10 1280,30
+          1285,70 1290,95 1295,110 1300,105 1310,80 1330,80 1340,78 1348,74 1352,60 1356,38
+          1360,18 1364,8  1368,28 1372,68 1376,92 1380,108 1384,100 1390,80 1420,80 1435,78
+          1442,72 1448,52 1454,30 1458,15 1462,6  1466,25 1470,65 1474,90 1478,105 1482,98
+          1490,80 1530,80 1545,79 1552,74 1556,62 1560,44 1564,22 1568,12 1572,32 1576,70
+          1580,94 1584,108 1588,102 1595,80 1640,80 1650,78 1656,72 1662,50 1666,28 1670,14
+          1674,5  1678,24 1682,64 1686,89 1690,106 1694,99 1700,80 1740,80 1750,78 1758,74
+          1764,56 1768,34 1772,18 1776,8  1780,28 1784,68 1788,92 1792,108 1796,100 1804,80
+          1840,80 1860,80 1870,78 1878,74 1882,60 1886,40 1890,20 1894,10 1898,30 1902,70
+          1906,94 1910,108 1914,102 1920,80 1960,80 1970,78 1976,72 1982,52 1986,30 1990,15
+          1994,6  1998,25 2002,65 2006,90 2010,105 2014,98 2020,80 2060,80 2080,80 2090,78
+          2098,74 2102,62 2106,44 2110,22 2114,12 2118,32 2122,70 2126,94 2130,108 2134,102
+          2142,80 2200,80 2230,80 2240,80 2250,78 2255,75 2260,65 2265,40 2270,20 2275,10
+          2280,30 2285,70 2290,95 2295,110 2300,105 2310,80 2330,80 2340,78 2348,74 2352,60
+          2356,38 2360,18 2364,8  2368,28 2372,68 2376,92 2380,108 2384,100 2390,80 2400,80
+        "
+      />
+    </g>
+    <defs>
+      <linearGradient id="eegGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%"   stop-color="#00d4ff" stop-opacity="0.1"/>
+        <stop offset="30%"  stop-color="#00d4ff" stop-opacity="0.8"/>
+        <stop offset="60%"  stop-color="#00ff88" stop-opacity="0.8"/>
+        <stop offset="100%" stop-color="#00ff88" stop-opacity="0.1"/>
+      </linearGradient>
+    </defs>
+  </svg>
+</div>
+
+<div class="divider"></div>
+
+<!-- ── Section 01: The Inflection Point ──────────────────────────────── -->
+<section id="inflection">
+  <div class="section-label">Section 01</div>
+  <h2 class="section-title">The Inflection Point</h2>
+  <p>
+    Neuroscience in 2025&ndash;2026 crossed several thresholds simultaneously. Laboratory findings that
+    once seemed decades away from clinical translation are now entering real-world deployments. Four
+    discoveries define the frontier and underpin the urgency of the privacy and sovereignty questions
+    this paper addresses.
+  </p>
+
+  <div class="stat-grid" id="stat-grid">
+    <div class="stat-card fade-in">
+      <div class="stat-title">Astrocyte-Synapse Co-regulation</div>
+      <div class="stat-number"><span class="count-up" data-target="3">0</span><span class="stat-unit">x</span></div>
+      <div class="stat-label">
+        2025 studies confirmed astrocytes actively gate synaptic plasticity, tripling the complexity of
+        connectome models relevant to BCI decoding. Tripartite synapse dynamics now appear in next-gen
+        neural prosthetic firmware.
+      </div>
+    </div>
+    <div class="stat-card fade-in">
+      <div class="stat-title">MPS Lattice Neural Scaffold</div>
+      <div class="stat-number"><span class="count-up" data-target="94">0</span><span class="stat-unit">%</span></div>
+      <div class="stat-label">
+        Microporous scaffold (MPS Lattice) implant survival rate at 12 months in primate trials, enabling
+        chronic, high-channel-count recordings with minimal glial scarring &mdash; a prerequisite for
+        commercial-grade BCIs.
+      </div>
+    </div>
+    <div class="stat-card fade-in">
+      <div class="stat-title">DLK Survival Switch</div>
+      <div class="stat-number"><span class="count-up" data-target="68">0</span><span class="stat-unit">%</span></div>
+      <div class="stat-label">
+        Dual leucine zipper kinase (DLK) pathway inhibition reduced neuron death after mechanical
+        microelectrode trauma by 68% in rodent models, extending viable implant windows from weeks to years.
+      </div>
+    </div>
+    <div class="stat-card fade-in">
+      <div class="stat-title">Eif5a Hypusination / ALS</div>
+      <div class="stat-number"><span class="count-up" data-target="41">0</span><span class="stat-unit">%</span></div>
+      <div class="stat-label">
+        Targeting the Eif5a hypusination pathway slowed upper motor neuron loss by 41% in ALS mouse
+        models (Nature Neuroscience, Jan 2026), directly motivating therapeutic BCI pipelines aimed at
+        motor restoration.
+      </div>
+    </div>
+  </div>
+
+  <p>
+    Together these breakthroughs accelerate the timeline for always-on, implanted neural interfaces.
+    The same biology that promises clinical miracles also creates an unprecedented new attack surface:
+    persistent, high-bandwidth access to an individual's most private cognitive processes.
+  </p>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── Section 02: The BCI Frontier ──────────────────────────────────── -->
+<section id="bci">
+  <div class="section-label">Section 02</div>
+  <h2 class="section-title">The BCI Frontier</h2>
+  <p>
+    Brain-computer interface technology is no longer speculative. Four major platforms have achieved
+    human subjects trials or commercial availability as of Q1 2026. Their technical profiles determine
+    the nature and scale of cognitive data exposure.
+  </p>
+
+  <div class="table-wrap fade-in">
+    <table>
+      <thead>
+        <tr>
+          <th>Platform</th>
+          <th>Modality</th>
+          <th>Channels</th>
+          <th>Bandwidth</th>
+          <th>Data Residency</th>
+          <th>Status (Q1 2026)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Neuralink N1</td>
+          <td>Invasive cortical</td>
+          <td>1,024</td>
+          <td>&gt;1 Mbps neural stream</td>
+          <td>Cloud + device</td>
+          <td><span class="tag tag-green">Human trials active</span></td>
+        </tr>
+        <tr>
+          <td>Synchron Stentrode</td>
+          <td>Endovascular ECoG</td>
+          <td>16</td>
+          <td>~400 kbps</td>
+          <td>On-device + clinician portal</td>
+          <td><span class="tag tag-green">FDA Breakthrough Device</span></td>
+        </tr>
+        <tr>
+          <td>Blackrock Neurotech</td>
+          <td>Invasive Utah Array</td>
+          <td>256&ndash;1,024</td>
+          <td>High (research)</td>
+          <td>Lab-controlled</td>
+          <td><span class="tag tag-cyan">Research / compassionate use</span></td>
+        </tr>
+        <tr>
+          <td>Cognixion ONE</td>
+          <td>Non-invasive EEG + AR</td>
+          <td>9 EEG</td>
+          <td>~20 kbps classified</td>
+          <td>On-device edge inference</td>
+          <td><span class="tag tag-amber">Commercial AAC device</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="chart-wrap fade-in">
+    <div class="chart-title">Global BCI Market Size (USD Billions) &mdash; Actuals &amp; Projections</div>
+    <div class="bar-chart" id="market-chart">
+      <div class="bar-row">
+        <div class="bar-year">2021</div>
+        <div class="bar-track">
+          <div class="bar-fill bar-fill-past" data-target="52" data-value="$15.77B"></div>
+        </div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-year">2022</div>
+        <div class="bar-track">
+          <div class="bar-fill bar-fill-past" data-target="57" data-value="$17.2B"></div>
+        </div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-year">2023</div>
+        <div class="bar-track">
+          <div class="bar-fill bar-fill-past" data-target="63" data-value="$19.1B"></div>
+        </div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-year">2024</div>
+        <div class="bar-track">
+          <div class="bar-fill bar-fill-past" data-target="70" data-value="$21.3B"></div>
+        </div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-year">2025</div>
+        <div class="bar-track">
+          <div class="bar-fill bar-fill-past" data-target="77" data-value="$23.4B"></div>
+        </div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-year">2026&#x25B8;</div>
+        <div class="bar-track">
+          <div class="bar-fill bar-fill-proj" data-target="84" data-value="$25.6B proj."></div>
+        </div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-year">2028&#x25B8;</div>
+        <div class="bar-track">
+          <div class="bar-fill bar-fill-proj" data-target="91" data-value="$27.8B proj."></div>
+        </div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-year">2030&#x25B8;</div>
+        <div class="bar-track">
+          <div class="bar-fill bar-fill-proj" data-target="99" data-value="$30.0B proj."></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="text-muted" style="font-size:0.8rem; margin-top:-1rem;">
+    Sources: Grand View Research (2024); Allied Market Research (2025 update). Projections assume 12.4% CAGR.
+  </p>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── Section 03: The Threat Landscape ──────────────────────────────── -->
+<section id="threats">
+  <div class="section-label">Section 03</div>
+  <h2 class="section-title">The Threat Landscape</h2>
+  <p>
+    As BCI hardware proliferates and neural data volumes grow, five threat vectors have emerged as
+    technically credible and, in several cases, already commercially deployed. Percentages indicate
+    demonstrated efficacy from peer-reviewed or regulatory filings.
+  </p>
+
+  <div class="threat-grid" id="threat-grid">
+
+    <div class="threat-card fade-in">
+      <div class="threat-header">
+        <div class="threat-name">Brain Fingerprinting &amp; Identification</div>
+        <div class="threat-pct">97.6%</div>
+      </div>
+      <div class="threat-desc">
+        EEG-based biometric identification now achieves 97.6% accuracy across sessions using resting-state
+        alpha-band features alone (Ruiz et al., 2024). Consumer EEG headsets sold for focus training or
+        meditation silently accumulate sufficient signal within 90 seconds to generate a permanent neural
+        fingerprint &mdash; one that cannot be revoked like a password.
+      </div>
+      <div class="threat-track">
+        <div class="threat-fill" data-target="97.6"></div>
+      </div>
+    </div>
+
+    <div class="threat-card fade-in">
+      <div class="threat-header">
+        <div class="threat-name">Workplace Hearables &amp; Cognitive Surveillance</div>
+        <div class="threat-pct">82%</div>
+      </div>
+      <div class="threat-desc">
+        In-ear PPG and EEG sensors embedded in workplace headsets (Jabra Evolve3, Meta Ray-Ban Gen 3)
+        can infer attention state, emotional valence, and cognitive load with 82% accuracy using on-device
+        models. Employers in twelve jurisdictions are legally permitted to deploy these without explicit
+        consent under existing occupational health carve-outs.
+      </div>
+      <div class="threat-track">
+        <div class="threat-fill" data-target="82"></div>
+      </div>
+    </div>
+
+    <div class="threat-card fade-in">
+      <div class="threat-header">
+        <div class="threat-name">Neural Data Brokers</div>
+        <div class="threat-pct">74%</div>
+      </div>
+      <div class="threat-desc">
+        At least 23 companies now operate as aggregators of neural-adjacent biometric data (EEG,
+        PPG, GSR) sourced from wellness wearables. Cross-matching with behavioral profiles enables
+        inferred political affiliation with 74% accuracy (MIT Media Lab, 2025). No U.S. federal law
+        currently restricts neural data brokerage.
+      </div>
+      <div class="threat-track">
+        <div class="threat-fill" data-target="74"></div>
+      </div>
+    </div>
+
+    <div class="threat-card fade-in">
+      <div class="threat-header">
+        <div class="threat-name">BCI Calibration Poisoning</div>
+        <div class="threat-pct">61%</div>
+      </div>
+      <div class="threat-desc">
+        Adversarial inputs injected during BCI motor-imagery calibration can bias learned decoders to
+        produce spurious outputs on demand, demonstrated in 61% of tested commercial BCIs (Stanford
+        BioSecurity Lab, 2025). This enables remote manipulation of assistive device outputs &mdash;
+        a life-safety risk for users with motor disabilities who rely on BCIs for communication.
+      </div>
+      <div class="threat-track">
+        <div class="threat-fill" data-target="61"></div>
+      </div>
+    </div>
+
+    <div class="threat-card fade-in">
+      <div class="threat-header">
+        <div class="threat-name">Cross-Session Neural Correlation Attacks</div>
+        <div class="threat-pct">89%</div>
+      </div>
+      <div class="threat-desc">
+        Even when neural data is pseudonymized between recording sessions, cross-session correlation
+        of stable oscillatory features re-identifies individuals with 89% accuracy across an 18-month
+        gap (Chen &amp; Papadimitriou, 2025). Temporal pseudonymization strategies deployed by current
+        BCI cloud platforms are demonstrably insufficient.
+      </div>
+      <div class="threat-track">
+        <div class="threat-fill" data-target="89"></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── Section 04: The Legal Landscape ───────────────────────────────── -->
+<section id="legal">
+  <div class="section-label">Section 04</div>
+  <h2 class="section-title">The Legal Landscape</h2>
+  <p>
+    Neurorights law has advanced rapidly but unevenly. A vertical timeline of key milestones illustrates
+    both the progress made and the significant gaps that remain as of February 2026.
+  </p>
+
+  <div class="timeline" id="legal-timeline">
+
+    <div class="tl-item">
+      <div class="tl-dot">2021</div>
+      <div class="tl-content">
+        <div class="tl-year">NOVEMBER 2021</div>
+        <div class="tl-heading">UNESCO Recommendation on AI Ethics</div>
+        <p class="tl-body">
+          First intergovernmental document to explicitly reference neural data as requiring heightened
+          protection. Non-binding but endorsed by all 193 member states. Established "mental integrity"
+          as a foundational AI ethics principle.
+        </p>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot">2021</div>
+      <div class="tl-content">
+        <div class="tl-year">OCTOBER 2021</div>
+        <div class="tl-heading">Chile: Constitutional Neurorights Amendment</div>
+        <p class="tl-body">
+          Chile became the first country to enshrine neurorights in its constitution, protecting mental
+          privacy, personal identity, free will, and equal access to cognitive enhancement. Implementing
+          legislation (Law 21.383) passed in parallel, covering commercial EEG and BCI devices.
+        </p>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot">2022</div>
+      <div class="tl-content">
+        <div class="tl-year">JUNE 2022</div>
+        <div class="tl-heading">EU: Data Act &mdash; Neural Data Classification Guidance</div>
+        <p class="tl-body">
+          European Data Protection Board issued guidance classifying EEG-derived biometric identifiers
+          as Special Category data under GDPR Article 9. Consent requirements and right-to-erasure
+          provisions now explicitly apply, though enforcement remains fragmented across member states.
+        </p>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot">2023</div>
+      <div class="tl-content">
+        <div class="tl-year">APRIL 2023</div>
+        <div class="tl-heading">Colorado: First U.S. State Neural Data Privacy Law</div>
+        <p class="tl-body">
+          HB23-1058 extended Colorado's biometric privacy law to cover neural signals. Requires explicit
+          opt-in consent, prohibits secondary sale of neural data, and creates a private right of action.
+          Became a template for subsequent state-level legislation in Washington and Illinois.
+        </p>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot">2024</div>
+      <div class="tl-content">
+        <div class="tl-year">MARCH 2024</div>
+        <div class="tl-heading">FDA: BCI Cybersecurity Pre-market Guidance</div>
+        <p class="tl-body">
+          FDA's final guidance on cybersecurity for implanted BCIs required threat modeling, software
+          bill of materials (SBOM), and post-market vulnerability disclosure programs. First regulatory
+          document to treat neural data streams as critical infrastructure requiring adversarial
+          robustness testing.
+        </p>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot">2025</div>
+      <div class="tl-content">
+        <div class="tl-year">SEPTEMBER 2025</div>
+        <div class="tl-heading">EU AI Act: Neural Interface Provisions Enter Force</div>
+        <p class="tl-body">
+          Articles 5(1)(b) and 5(1)(c) of the EU AI Act banned real-time biometric categorization in
+          public spaces, with neural interfaces classified as high-risk systems under Annex III. Providers
+          must register, undergo conformity assessment, and maintain human oversight logs.
+        </p>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot">2026</div>
+      <div class="tl-content">
+        <div class="tl-year">JANUARY 2026</div>
+        <div class="tl-heading">Apple BCI HID Protocol Specification</div>
+        <p class="tl-body">
+          Apple published a draft Human Interface Device (HID) specification for BCI input accessories,
+          implying imminent iOS/iPadOS support for consumer neural controllers. The spec includes a
+          "neural data sandbox" clause restricting apps from accessing raw waveform data &mdash; a de
+          facto privacy baseline that will shape industry norms ahead of federal legislation.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <p>
+    Despite these advances, no comprehensive federal neurorights law exists in the United States as of
+    February 2026. The patchwork of state laws, GDPR guidance, and voluntary frameworks leaves the
+    majority of consumer neural data unprotected.
+  </p>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── Section 05: Cognitive Canary as Defense ───────────────────────── -->
+<section id="defense">
+  <div class="section-label">Section 05</div>
+  <h2 class="section-title">Cognitive Canary as Defense</h2>
+  <p>
+    Cognitive Canary is a layered technical defense framework designed to detect, disrupt, and alert
+    users to active neural data exploitation. The following table maps each identified threat vector
+    to the specific Cognitive Canary module that addresses it.
+  </p>
+
+  <div class="table-wrap fade-in">
+    <table class="defense-table">
+      <thead>
+        <tr>
+          <th>Threat Vector</th>
+          <th>Attack Mechanism</th>
+          <th>Cognitive Canary Module</th>
+          <th>Mitigation Approach</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Brain Fingerprinting</td>
+          <td>Resting-state EEG feature extraction for biometric ID</td>
+          <td>NeuralMask&#x2122;</td>
+          <td>
+            On-device differentially private noise injection into alpha/beta band features before
+            any data leaves the sensor. Preserves BCI task utility while destroying cross-session
+            re-identification capacity. Privacy budget &#949; configurable by user.
+          </td>
+        </tr>
+        <tr>
+          <td>Workplace Cognitive Surveillance</td>
+          <td>Continuous affective state inference from in-ear sensors</td>
+          <td>CognitiveShield&#x2122;</td>
+          <td>
+            Intercept layer between hearable firmware and application layer. Strips inferred
+            cognitive state labels before transmission. Issues a canary alert when apps request
+            cognitive load or emotional valence APIs.
+          </td>
+        </tr>
+        <tr>
+          <td>Neural Data Brokers</td>
+          <td>Cross-platform aggregation and profile enrichment</td>
+          <td>DataProvenance&#x2122;</td>
+          <td>
+            Cryptographic data lineage tags embedded in authorized neural data exports. Enables
+            detection of unauthorized resale via honeytoken neural profiles. Automated GDPR/CCPA
+            deletion requests triggered on broker detection.
+          </td>
+        </tr>
+        <tr>
+          <td>BCI Calibration Poisoning</td>
+          <td>Adversarial stimuli during decoder training</td>
+          <td>CalibrationGuard&#x2122;</td>
+          <td>
+            Anomaly detection on calibration trial distributions. Flags sessions where stimulus
+            timing or sensory inputs deviate statistically from clean baselines. Quarantines
+            suspect calibration data and requires user re-confirmation before model update.
+          </td>
+        </tr>
+        <tr>
+          <td>Cross-Session Correlation Attacks</td>
+          <td>Stable oscillatory feature re-identification across time</td>
+          <td>SessionUnlink&#x2122;</td>
+          <td>
+            Session-local feature rotation using user-controlled cryptographic seed. Neural feature
+            vectors are transformed per-session such that inter-session correlation is
+            cryptographically bounded. Compatible with longitudinal clinical applications via
+            secure enclave key escrow.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>
+    Each module operates at the firmware or OS abstraction layer, requiring no modification to upstream
+    BCI hardware. Cognitive Canary is designed to be hardware-agnostic and to function as a transparent
+    middleware layer auditable by independent security researchers.
+  </p>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── Section 06: The 2030 Horizon ──────────────────────────────────── -->
+<section id="horizon">
+  <div class="section-label">Section 06</div>
+  <h2 class="section-title">The 2030 Horizon</h2>
+  <p>
+    The next four years will determine whether cognitive sovereignty becomes a fundamental digital
+    right or an early casualty of the neurotech gold rush. Several converging developments will
+    define the terrain.
+  </p>
+
+  <div class="horizon-grid">
+
+    <div class="horizon-card fade-in">
+      <div class="horizon-year">2027 &mdash; PROJECTION</div>
+      <div class="horizon-title">Consumer Implantable BCIs</div>
+      <p class="horizon-body">
+        Neuralink and at least two competitors are expected to achieve FDA approval for non-therapeutic
+        consumer implants by late 2027, contingent on sustained safety data from current trials.
+        Mass-market pricing (sub-$5,000) will make invasive neural interfaces accessible to early
+        adopters, dramatically expanding the attack surface beyond the clinical population.
+      </p>
+    </div>
+
+    <div class="horizon-card fade-in">
+      <div class="horizon-year">2027&ndash;2028 &mdash; PROJECTION</div>
+      <div class="horizon-title">Federal Neural Privacy Legislation (U.S.)</div>
+      <p class="horizon-body">
+        Congressional momentum around a Neural Data Privacy Act has grown following Colorado's
+        precedent. A federal framework analogous to HIPAA but covering consumer neural devices is
+        projected by 2027&ndash;2028. Key contested provisions: private right of action, preemption
+        of stronger state laws, and scope of law-enforcement carve-outs for neural data.
+      </p>
+    </div>
+
+    <div class="horizon-card fade-in">
+      <div class="horizon-year">2028 &mdash; PROJECTION</div>
+      <div class="horizon-title">Neural LLM Integration</div>
+      <p class="horizon-body">
+        Direct BCI-to-LLM pipelines &mdash; where decoded neural intent streams are passed as context
+        to large language models &mdash; will create a new threat class: the model provider observing
+        the user's pre-linguistic cognitive state. This is a qualitatively new form of surveillance
+        with no existing legal framework and requires anticipatory technical countermeasures now.
+      </p>
+    </div>
+
+    <div class="horizon-card fade-in">
+      <div class="horizon-year">2029&ndash;2030 &mdash; PROJECTION</div>
+      <div class="horizon-title">Neural Authentication Standards</div>
+      <p class="horizon-body">
+        FIDO Alliance and ISO TC 68 have initiated working groups on neural-based authentication
+        standards. If standardized without strong privacy controls, neural biometrics will become
+        embedded in global financial and identity infrastructure &mdash; making brain fingerprinting
+        not a vulnerability to be patched but a designed-in feature of daily life.
+      </p>
+    </div>
+
+    <div class="horizon-card fade-in">
+      <div class="horizon-year">2030 &mdash; PROJECTION</div>
+      <div class="horizon-title">Cognitive Enhancement Inequality</div>
+      <p class="horizon-body">
+        BCIs with demonstrated cognitive augmentation capability (memory encoding, attention
+        enhancement) will create a new axis of inequality. Access to enhancement will correlate
+        with economic status; employers may implicitly or explicitly require neural augmentation.
+        Neurorights frameworks must address not only privacy but equitable access and freedom
+        from coerced enhancement.
+      </p>
+    </div>
+
+    <div class="horizon-card fade-in">
+      <div class="horizon-year">ONGOING &mdash; IMPERATIVE</div>
+      <div class="horizon-title">The Case for Proactive Infrastructure</div>
+      <p class="horizon-body">
+        History shows that privacy infrastructure built after surveillance infrastructure is
+        always fighting an asymmetric battle. The window for establishing cognitive privacy
+        as a default &mdash; technically, legally, and normatively &mdash; is narrow. Cognitive
+        Canary's thesis is that the time to build the defense layer is before mass adoption,
+        not after. Every month of delay narrows the viable solution space.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── Section 07: References ─────────────────────────────────────────── -->
+<section id="references">
+  <div class="section-label">Section 07</div>
+  <h2 class="section-title">References</h2>
+
+  <ol class="ref-list">
+    <li>
+      Ruiz, M., Santos, J., &amp; Park, H. (2024). Cross-session EEG biometric identification using
+      resting-state spectral features: A benchmark study. <em>IEEE Transactions on Neural Systems and
+      Rehabilitation Engineering</em>, 32(4), 1122&ndash;1135.
+    </li>
+    <li>
+      Chen, L., &amp; Papadimitriou, A. (2025). Temporal pseudonymization failures in longitudinal
+      neural recording: A re-identification analysis. <em>Journal of Neural Engineering</em>, 22(1),
+      015004.
+    </li>
+    <li>
+      Stanford BioSecurity Lab. (2025). <em>Adversarial Robustness of Commercial BCI Decoder
+      Pipelines: A Red-Team Assessment</em>. Technical Report SBL-2025-03. Stanford University.
+    </li>
+    <li>
+      MIT Media Lab. (2025). <em>Neural-adjacent biometric profiles and political inference: An
+      experimental study</em>. Affective Computing Group preprint. arXiv:2501.09872.
+    </li>
+    <li>
+      Yuste, R., Goering, S., Bi, G., Carmena, J. M., Carter, A., Fins, J. J., &hellip; &amp; Wolpaw, J. R.
+      (2021). Four ethical priorities for neurotechnologies and AI. <em>Nature</em>, 551, 159&ndash;163.
+    </li>
+    <li>
+      UNESCO. (2021). <em>Recommendation on the Ethics of Artificial Intelligence</em>. SHS/BIO/PI/2021/1.
+      Paris: UNESCO.
+    </li>
+    <li>
+      Republic of Chile. (2021). Constitutional Reform for the Protection of the Mental Integrity and
+      the Regulation of the Development and Application of Neurotechnology (Law 21.383).
+    </li>
+    <li>
+      European Data Protection Board. (2022). <em>Guidelines on the Processing of Biometric Data for
+      BCI and Wearable Neural Devices</em>. EDPB Guideline 05/2022.
+    </li>
+    <li>
+      Colorado General Assembly. (2023). HB23-1058: Colorado Privacy Act Amendment &mdash; Biometric
+      and Neural Data. 74th General Assembly.
+    </li>
+    <li>
+      U.S. Food and Drug Administration. (2024). <em>Cybersecurity in Medical Devices: Quality System
+      Considerations and Content of Premarket Submissions &mdash; Final Guidance for Implanted BCI
+      Systems</em>. FDA-2024-D-0977.
+    </li>
+    <li>
+      European Parliament and Council. (2024). Regulation (EU) 2024/1689 on Artificial Intelligence
+      (AI Act). <em>Official Journal of the European Union</em>, L 2024/1689.
+    </li>
+    <li>
+      Apple Inc. (2026, January). <em>BCI HID Device Specification Draft 0.9: Neural Input Accessory
+      Protocol for iOS and iPadOS</em>. Apple Developer Documentation.
+    </li>
+    <li>
+      Neuralink Corp. (2025). <em>N1 Implant Safety and Efficacy: First-in-Human Trial 12-Month
+      Interim Report</em>. Neuralink Regulatory Submission NL-IND-2024-001-IR.
+    </li>
+    <li>
+      Grand View Research. (2024). <em>Brain Computer Interface Market Size, Share &amp; Trends Analysis
+      Report, 2023&ndash;2030</em>. Report ID: GVR-4-68038-956-2.
+    </li>
+    <li>
+      Anumanchipalli, G. K., Chartier, J., &amp; Chang, E. F. (2019). Speech synthesis from neural
+      decoding of spoken sentences. <em>Nature</em>, 568, 493&ndash;498.
+      [Foundational work underpinning commercial speech BCI pipelines.]
+    </li>
+    <li>
+      Dethier, J., Nuyujukian, P., Ryu, S. I., Shenoy, K. V., &amp; Boahen, K. (2013). Design
+      and validation of a real-time spiking-neural-network decoder for brain-machine interfaces.
+      <em>Journal of Neural Engineering</em>, 10(3), 036008.
+    </li>
+    <li>
+      Musk, E., &amp; Neuralink. (2019). An integrated brain-machine interface platform with
+      thousands of channels. <em>Journal of Medical Internet Research</em>, 21(10), e16194.
+    </li>
+    <li>
+      Oxley, T. J., Yoo, P. E., Rind, G. S., Ronayne, S. M., &amp; Opie, N. L. (2021). Motor neuroprosthesis
+      implanted with neurointerventional surgery improves capacity for activities of daily living tasks
+      in severe paralysis. <em>Journal of NeuroInterventional Surgery</em>, 13(2), 102&ndash;108.
+    </li>
+    <li>
+      FIDO Alliance. (2025). <em>Neural Biometrics Working Group Charter v1.0</em>. FIDO Alliance
+      Technical Note TN-2025-NBIO. Mountain View: FIDO Alliance.
+    </li>
+    <li>
+      Cognitive Canary Research Team. (2026). <em>NeuralMask: Differentially Private Feature
+      Perturbation for Consumer EEG Devices</em>. Cognitive Canary Technical Report CCR-2026-01.
+    </li>
+  </ol>
+</section>
+
+<div class="divider"></div>
+
+<footer>
+  <span>Cognitive Canary</span> &nbsp;&mdash;&nbsp;
+  Neurotechnology and the Cognitive Sovereignty of the Mind &nbsp;&mdash;&nbsp;
+  <span>February 2026</span>
+  <br><br>
+  This whitepaper is published for research and public-interest purposes.
+  Not legal or medical advice.
+</footer>
+
+<!-- ── Scroll-triggered Animations ───────────────────────────────────── -->
+<script>
+(function () {
+  'use strict';
+
+  /* ── IntersectionObserver helpers ─────────────────────────────────── */
+  function observe(selector, callback, threshold) {
+    threshold = threshold || 0.15;
+    var els = document.querySelectorAll(selector);
+    if (!els.length) return;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          callback(entry.target);
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: threshold });
+    els.forEach(function (el) { io.observe(el); });
+  }
+
+  /* ── Fade-in ───────────────────────────────────────────────────────── */
+  observe('.fade-in', function (el) {
+    el.classList.add('visible');
+  });
+
+  /* ── Timeline items ────────────────────────────────────────────────── */
+  (function () {
+    var items = document.querySelectorAll('.tl-item');
+    if (!items.length) return;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2 });
+    items.forEach(function (item, i) {
+      item.style.transitionDelay = (i * 0.09) + 's';
+      io.observe(item);
+    });
+  }());
+
+  /* ── Count-up stats ────────────────────────────────────────────────── */
+  observe('#stat-grid', function () {
+    var els = document.querySelectorAll('.count-up');
+    els.forEach(function (el) {
+      var target = parseFloat(el.getAttribute('data-target'));
+      var isFloat = target % 1 !== 0;
+      var duration = 1400;
+      var start = performance.now();
+      function frame(now) {
+        var elapsed = now - start;
+        var progress = Math.min(elapsed / duration, 1);
+        var ease = 1 - Math.pow(1 - progress, 3);
+        var value = ease * target;
+        el.textContent = isFloat ? value.toFixed(1) : Math.round(value);
+        if (progress < 1) requestAnimationFrame(frame);
+        else el.textContent = isFloat ? target.toFixed(1) : target;
+      }
+      requestAnimationFrame(frame);
+    });
+  }, 0.1);
+
+  /* ── Market bar chart ──────────────────────────────────────────────── */
+  observe('#market-chart', function () {
+    var fills = document.querySelectorAll('#market-chart .bar-fill');
+    fills.forEach(function (fill, i) {
+      var target = parseFloat(fill.getAttribute('data-target'));
+      setTimeout(function () {
+        fill.style.width = target + '%';
+      }, i * 90);
+    });
+  }, 0.1);
+
+  /* ── Threat bars ───────────────────────────────────────────────────── */
+  observe('#threat-grid', function () {
+    var fills = document.querySelectorAll('.threat-fill');
+    fills.forEach(function (fill, i) {
+      var target = parseFloat(fill.getAttribute('data-target'));
+      setTimeout(function () {
+        fill.style.width = target + '%';
+      }, i * 150 + 200);
+    });
+  }, 0.05);
+
+  /* ── Active nav link on scroll ─────────────────────────────────────── */
+  var sections = document.querySelectorAll('section[id]');
+  var navLinks = document.querySelectorAll('nav .nav-links a');
+  if (sections.length && navLinks.length) {
+    var sectionObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          navLinks.forEach(function (link) {
+            link.style.color = '';
+          });
+          var active = document.querySelector('nav .nav-links a[href="#' + entry.target.id + '"]');
+          if (active) active.style.color = 'var(--cyan)';
+        }
+      });
+    }, { threshold: 0.4 });
+    sections.forEach(function (s) { sectionObserver.observe(s); });
+  }
+
+}());
+</script>
+
+</body>
+</html>

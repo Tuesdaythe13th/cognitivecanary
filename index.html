@@ -1,0 +1,1791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cognitive Canary — Behavioral Privacy Shield</title>
+<style>
+  :root {
+    --bg: #050510;
+    --bg2: #080820;
+    --bg3: #0d0d2b;
+    --green: #00ff88;
+    --cyan: #00d4ff;
+    --purple: #7b2fff;
+    --deep-blue: #1a1a4e;
+    --card-border: rgba(0,255,136,0.15);
+    --card-hover-glow: 0 0 20px rgba(0,255,136,0.2);
+    --text: #c8d8e8;
+    --text-dim: #6a7f9a;
+    --mono: 'Courier New', 'Lucida Console', monospace;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ===== NEURAL CANVAS ===== */
+  #neural-bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.55;
+  }
+
+  /* ===== LAYOUT ===== */
+  .section {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 80px 24px;
+  }
+
+  .section-header {
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--green);
+    font-family: var(--mono);
+    margin-bottom: 12px;
+    padding-left: 14px;
+    border-left: 3px solid var(--green);
+    display: inline-block;
+  }
+
+  .section-title {
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 48px;
+  }
+
+  /* ===== HERO ===== */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .badge {
+    display: inline-block;
+    border: 1px solid var(--green);
+    color: var(--green);
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 2px;
+    margin-bottom: 28px;
+    animation: glow-pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes glow-pulse {
+    0%, 100% { box-shadow: 0 0 8px rgba(0,255,136,0.3); }
+    50% { box-shadow: 0 0 24px rgba(0,255,136,0.6), 0 0 48px rgba(0,255,136,0.2); }
+  }
+
+  .hero-title {
+    font-size: clamp(3rem, 10vw, 7rem);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 24px;
+    background: linear-gradient(135deg, var(--green) 0%, var(--cyan) 50%, var(--purple) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+    filter: drop-shadow(0 0 30px rgba(0,255,136,0.3));
+  }
+
+  .hero-subtitle-wrap {
+    height: 2.2rem;
+    margin-bottom: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-subtitle {
+    font-family: var(--mono);
+    font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+    color: var(--cyan);
+    white-space: nowrap;
+    overflow: hidden;
+    border-right: 2px solid var(--cyan);
+    animation: cursor-blink 0.8s step-end infinite;
+  }
+
+  @keyframes cursor-blink {
+    0%, 100% { border-color: var(--cyan); }
+    50% { border-color: transparent; }
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 48px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    border-radius: 4px;
+    font-family: var(--mono);
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: none;
+  }
+
+  .btn-primary {
+    background: var(--green);
+    color: #050510;
+  }
+
+  .btn-primary:hover {
+    background: #fff;
+    box-shadow: 0 0 30px rgba(0,255,136,0.6);
+    transform: translateY(-2px);
+  }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--cyan);
+    border: 1px solid var(--cyan);
+  }
+
+  .btn-outline:hover {
+    background: rgba(0,212,255,0.1);
+    box-shadow: 0 0 20px rgba(0,212,255,0.3);
+    transform: translateY(-2px);
+  }
+
+  .hero-tagline {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ===== DIVIDER ===== */
+  .divider {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--green), var(--cyan), transparent);
+    opacity: 0.3;
+    margin: 0;
+  }
+
+  /* ===== UPDATE CARDS ===== */
+  .updates-grid {
+    display: grid;
+    gap: 24px;
+  }
+
+  .update-card {
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 28px 32px;
+    background: rgba(13,13,43,0.6);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .update-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    border-radius: 4px 0 0 4px;
+  }
+
+  .update-card.march::before { background: var(--green); }
+  .update-card.feb::before { background: var(--cyan); }
+
+  .update-card:hover {
+    box-shadow: var(--card-hover-glow);
+    transform: translateY(-2px);
+    border-color: rgba(0,255,136,0.35);
+  }
+
+  .update-date {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .update-card.march .update-date { color: var(--green); }
+  .update-card.feb .update-date { color: var(--cyan); }
+
+  .update-version {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 16px;
+  }
+
+  .update-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .update-list li {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--text);
+    padding-left: 20px;
+    position: relative;
+  }
+
+  .update-list li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--text-dim);
+  }
+
+  .update-list li strong {
+    color: var(--green);
+  }
+
+  .update-card.feb .update-list li strong {
+    color: var(--cyan);
+  }
+
+  /* ===== DEMOS SECTION ===== */
+  #demos {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 80px 24px;
+  }
+
+  .demos-grid {
+    display: grid;
+    gap: 32px;
+  }
+
+  .demo-card {
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    background: rgba(8,8,32,0.8);
+    backdrop-filter: blur(12px);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    background-image:
+      linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .demo-card:hover {
+    box-shadow: var(--card-hover-glow);
+    border-color: rgba(0,255,136,0.3);
+  }
+
+  .demo-header {
+    padding: 20px 24px 12px;
+    border-bottom: 1px solid rgba(0,255,136,0.08);
+  }
+
+  .demo-num {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--green);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .demo-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+
+  .demo-desc {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .demo-body {
+    padding: 20px 24px 24px;
+  }
+
+  canvas.demo-canvas {
+    display: block;
+    width: 100%;
+    border-radius: 4px;
+    background: #030312;
+  }
+
+  .demo-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin-top: 14px;
+  }
+
+  .demo-btn {
+    background: transparent;
+    border: 1px solid var(--green);
+    color: var(--green);
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    padding: 7px 16px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.05em;
+  }
+
+  .demo-btn:hover {
+    background: rgba(0,255,136,0.12);
+    box-shadow: 0 0 12px rgba(0,255,136,0.3);
+  }
+
+  .demo-btn.active {
+    background: var(--green);
+    color: #050510;
+  }
+
+  .slider-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    width: 90px;
+    height: 4px;
+    background: rgba(0,255,136,0.2);
+    border-radius: 2px;
+    outline: none;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--green);
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(0,255,136,0.6);
+  }
+
+  .demo-stat {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    margin-top: 10px;
+  }
+
+  .demo-stat span {
+    color: var(--green);
+    font-weight: bold;
+  }
+
+  .badge-attack {
+    display: inline-block;
+    background: rgba(0,255,136,0.15);
+    border: 1px solid var(--green);
+    color: var(--green);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    padding: 4px 12px;
+    border-radius: 2px;
+    animation: glow-pulse 2s ease-in-out infinite;
+  }
+
+  .badge-warn {
+    display: inline-block;
+    background: rgba(255,170,0,0.12);
+    border: 1px solid #ffaa00;
+    color: #ffaa00;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    padding: 4px 12px;
+    border-radius: 2px;
+  }
+
+  /* ===== MODULES ===== */
+  .modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+  }
+
+  .module-card {
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 20px 22px;
+    background: rgba(13,13,43,0.5);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .module-card:hover {
+    box-shadow: var(--card-hover-glow);
+    transform: translateY(-3px);
+    border-color: rgba(0,255,136,0.3);
+  }
+
+  .module-icon {
+    font-size: 1.6rem;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .module-name {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--cyan);
+    margin-bottom: 6px;
+    word-break: break-all;
+  }
+
+  .module-desc {
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+
+  .version-badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    padding: 3px 8px;
+    border-radius: 2px;
+    letter-spacing: 0.05em;
+  }
+
+  .version-badge.new {
+    background: rgba(0,255,136,0.15);
+    border: 1px solid var(--green);
+    color: var(--green);
+    animation: glow-pulse 3s ease-in-out infinite;
+  }
+
+  .version-badge.stable {
+    background: rgba(0,212,255,0.1);
+    border: 1px solid rgba(0,212,255,0.4);
+    color: var(--cyan);
+  }
+
+  /* ===== NEURORIGHTS ===== */
+  #neurorights {
+    position: relative;
+    z-index: 1;
+  }
+
+  .neurorights-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 80px 24px;
+  }
+
+  .neurorights-block {
+    border: 1px solid rgba(123,47,255,0.4);
+    border-radius: 12px;
+    padding: 48px 40px;
+    background: linear-gradient(135deg, rgba(123,47,255,0.08) 0%, rgba(0,212,255,0.04) 100%);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .neurorights-block::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(123,47,255,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .neurorights-title {
+    font-size: clamp(1.4rem, 4vw, 2.2rem);
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 20px;
+    line-height: 1.2;
+  }
+
+  .neurorights-quote {
+    font-family: var(--mono);
+    font-size: clamp(0.85rem, 2vw, 1rem);
+    color: var(--cyan);
+    max-width: 600px;
+    margin: 0 auto 28px;
+    opacity: 0.85;
+    font-style: italic;
+  }
+
+  .neurorights-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--green);
+    text-decoration: none;
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    border-bottom: 1px solid rgba(0,255,136,0.3);
+    padding-bottom: 2px;
+    transition: all 0.3s ease;
+  }
+
+  .neurorights-link:hover {
+    color: #fff;
+    border-bottom-color: #fff;
+    text-shadow: 0 0 12px rgba(0,255,136,0.5);
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 32px 24px;
+    border-top: 1px solid rgba(0,255,136,0.1);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+  }
+
+  footer span { color: var(--green); }
+
+  /* ===== SCAN LINE ANIMATION ===== */
+  @keyframes scan-line {
+    0% { transform: translateY(-100%); opacity: 0; }
+    10% { opacity: 0.4; }
+    90% { opacity: 0.4; }
+    100% { transform: translateY(400%); opacity: 0; }
+  }
+
+  /* ===== TICKER ===== */
+  .ticker-wrap {
+    overflow: hidden;
+    border: 1px solid rgba(0,255,136,0.15);
+    border-radius: 4px;
+    background: rgba(0,0,0,0.4);
+    padding: 6px 12px;
+    margin-top: 12px;
+    height: 28px;
+  }
+
+  .ticker-text {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--green);
+    white-space: nowrap;
+    animation: ticker-scroll 18s linear infinite;
+    display: inline-block;
+  }
+
+  @keyframes ticker-scroll {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-200%); }
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 640px) {
+    .update-card { padding: 20px 18px; }
+    .demo-body { padding: 14px 16px 18px; }
+    .neurorights-block { padding: 32px 20px; }
+    .demo-controls { flex-direction: column; align-items: flex-start; }
+    .modules-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ===== SCROLLBAR ===== */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: rgba(0,255,136,0.3); border-radius: 3px; }
+
+  /* ===== SECTION FADE IN ===== */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-in.visible {
+    opacity: 1;
+    transform: none;
+  }
+</style>
+</head>
+<body>
+
+<!-- NEURAL BACKGROUND CANVAS -->
+<canvas id="neural-bg"></canvas>
+
+<!-- ===== HERO ===== -->
+<section id="hero">
+  <div class="badge">d/acc &mdash; Defensive Acceleration</div>
+  <h1 class="hero-title">Cognitive Canary</h1>
+  <div class="hero-subtitle-wrap">
+    <div class="hero-subtitle" id="typewriter"></div>
+  </div>
+  <div class="hero-cta">
+    <a href="#demos" class="btn btn-primary">Run Demos ↓</a>
+    <a href="https://github.com" class="btn btn-outline" target="_blank" rel="noopener">GitHub →</a>
+  </div>
+  <p class="hero-tagline">all rights reserved, artifex labs 2026</p>
+</section>
+
+<div class="divider"></div>
+
+<!-- ===== UPDATES ===== -->
+<section class="section fade-in" id="updates">
+  <div class="section-header">Changelog</div>
+  <h2 class="section-title">Latest Updates</h2>
+  <div class="updates-grid">
+
+    <div class="update-card march">
+      <div class="update-date">March 1, 2026</div>
+      <div class="update-version">v6.1 &mdash; Formal Privacy Guarantees</div>
+      <ul class="update-list">
+        <li><strong>differential_privacy.py</strong>: Laplace &amp; Gaussian mechanisms + Rényi DP accounting. Formal ε-DP bounds.</li>
+        <li><strong>persona_engine.py</strong>: Stateful cross-session behavioral persona to defeat longitudinal re-identification.</li>
+        <li><strong>tests/</strong>: 102 pytest tests, all passing.</li>
+        <li><strong>Compat:</strong> numpy 2.x compatibility fix (<code>np.trapz</code> → <code>np.trapezoid</code>)</li>
+      </ul>
+    </div>
+
+    <div class="update-card feb">
+      <div class="update-date">February 14, 2026</div>
+      <div class="update-version">v6.0 &mdash; Context Awareness Launch</div>
+      <ul class="update-list">
+        <li><strong>Multi-modal 3D Lissajous</strong> (mouse + scroll + zoom)</li>
+        <li><strong>Adaptive tremor matching</strong> (FFT baseline learning)</li>
+        <li><strong>Keystroke jitter cascade</strong> (3-channel injection)</li>
+        <li><strong>Task classifier v2</strong> (18 task types)</li>
+        <li><strong>Gradient auditor v2</strong> (92% FL poisoning detection)</li>
+        <li><strong>100% productivity failsafe</strong></li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ===== DEMOS ===== -->
+<section id="demos" class="fade-in">
+  <div class="section" style="padding-bottom: 0;">
+    <div class="section-header">Live Demos</div>
+    <h2 class="section-title">Five Defensive Mechanisms — In Action</h2>
+  </div>
+  <div style="max-width:1100px; margin:0 auto; padding: 0 24px 80px; display:flex; flex-direction:column; gap:32px;">
+
+    <!-- DEMO 1 -->
+    <div class="demo-card fade-in">
+      <div class="demo-header">
+        <div class="demo-num">Demo 01</div>
+        <div class="demo-title">Lissajous 3D Pathtracer</div>
+        <div class="demo-desc">Real-time projection of the 3D cursor obfuscation path. Frequencies 13:8:5 are coprime — guaranteeing maximal ergodic coverage of the cursor space.</div>
+      </div>
+      <div class="demo-body">
+        <canvas class="demo-canvas" id="c1" height="280"></canvas>
+        <div class="demo-controls">
+          <div class="slider-wrap">
+            Speed
+            <input type="range" id="s1-speed" min="1" max="10" value="4">
+            <span id="s1-speed-val" style="color:var(--green);min-width:20px;">4</span>
+          </div>
+          <div class="slider-wrap">
+            Trail
+            <input type="range" id="s1-trail" min="50" max="600" value="220">
+            <span id="s1-trail-val" style="color:var(--cyan);min-width:30px;">220</span>
+          </div>
+        </div>
+        <div class="demo-stat">
+          Frequencies: <span>13 : 8 : 5</span> &nbsp;|&nbsp;
+          Coprime: <span>YES</span> &nbsp;|&nbsp;
+          Ergodic coverage: <span>MAXIMAL</span> &nbsp;|&nbsp;
+          Spectral entropy: <span id="d1-entropy">3.21</span> nats
+        </div>
+      </div>
+    </div>
+
+    <!-- DEMO 2 -->
+    <div class="demo-card fade-in">
+      <div class="demo-header">
+        <div class="demo-num">Demo 02</div>
+        <div class="demo-title">Keystroke Jitter Shield</div>
+        <div class="demo-desc">Inter-keystroke interval (IKI) distribution before and after 3-channel noise injection. Pink-noise variance defeats timing-based neural classifiers while maintaining WPM.</div>
+      </div>
+      <div class="demo-body">
+        <canvas class="demo-canvas" id="c2" height="220"></canvas>
+        <div class="demo-controls">
+          <button class="demo-btn" id="d2-toggle">Toggle Protection</button>
+          <div class="demo-stat" style="margin-top:0;">
+            WPM: <span>65</span> &nbsp;|&nbsp;
+            <span id="d2-badge" style="display:none;"></span>
+          </div>
+        </div>
+        <div class="demo-stat">Mode: <span id="d2-mode">UNPROTECTED</span></div>
+      </div>
+    </div>
+
+    <!-- DEMO 3 -->
+    <div class="demo-card fade-in">
+      <div class="demo-header">
+        <div class="demo-num">Demo 03</div>
+        <div class="demo-title">Differential Privacy Budget Gauge</div>
+        <div class="demo-desc">Live ε-budget tracking with Rényi DP composition — up to √k tighter than basic composition. Watch the advantage compound as query count grows.</div>
+      </div>
+      <div class="demo-body">
+        <canvas class="demo-canvas" id="c3" height="280"></canvas>
+        <div class="demo-controls">
+          <button class="demo-btn" id="d3-query">Simulate 10 Queries</button>
+          <button class="demo-btn" id="d3-reset">Reset Session</button>
+        </div>
+        <div class="demo-stat">
+          Basic Composition ε: <span id="d3-basic">0.00</span> &nbsp;|&nbsp;
+          Rényi DP ε: <span id="d3-renyi">0.00</span> &nbsp;|&nbsp;
+          Queries: <span id="d3-queries">0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEMO 4 -->
+    <div class="demo-card fade-in">
+      <div class="demo-header">
+        <div class="demo-num">Demo 04</div>
+        <div class="demo-title">Neural Threat Scanner</div>
+        <div class="demo-desc">Simulated classifier confidence for four attack surfaces. Cognitive Canary drives all vectors below the detection threshold in real time.</div>
+      </div>
+      <div class="demo-body">
+        <canvas class="demo-canvas" id="c4" height="240"></canvas>
+        <div class="demo-controls">
+          <button class="demo-btn" id="d4-toggle">Activate Canary</button>
+          <div class="demo-stat" style="margin-top:0;">Status: <span id="d4-status">EXPOSED</span></div>
+        </div>
+        <div class="ticker-wrap">
+          <span class="ticker-text" id="d4-ticker">
+            [MONITOR] Gradient auditor: IDLE · [SCAN] Cursor vectors analyzed · [ALERT] Keystroke classifier active · [MONITOR] FL gradient norm: 2.847 · [SCAN] Temporal correlation: 0.71 · [ALERT] Re-ID risk elevated · [OK] Lissajous noise injected · [OK] Jitter shield armed
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEMO 5 -->
+    <div class="demo-card fade-in">
+      <div class="demo-header">
+        <div class="demo-num">Demo 05</div>
+        <div class="demo-title">Persona Coherence Timeline</div>
+        <div class="demo-desc">Session fingerprints over time. Without persona engine: each session leaks a unique signature. With persona: sessions cluster within a synthetic identity window, then rotate.</div>
+      </div>
+      <div class="demo-body">
+        <canvas class="demo-canvas" id="c5" height="260"></canvas>
+        <div class="demo-controls">
+          <button class="demo-btn" id="d5-toggle">Enable Persona Engine</button>
+          <button class="demo-btn" id="d5-add">Add Session</button>
+        </div>
+        <div class="demo-stat">
+          Max cross-session correlation: <span id="d5-corr">0.89</span> &nbsp;|&nbsp;
+          <span id="d5-safe" style="color:#ff4466;">✗ RISK</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ===== MODULES ===== -->
+<section class="section fade-in">
+  <div class="section-header">Architecture</div>
+  <h2 class="section-title">Python Modules</h2>
+  <div class="modules-grid">
+    <div class="module-card">
+      <span class="module-icon">🌀</span>
+      <div class="module-name">lissajous_3d.py</div>
+      <div class="module-desc">3D cursor obfuscation via coprime-frequency Lissajous parametric injection.</div>
+      <span class="version-badge stable">v6.0</span>
+    </div>
+    <div class="module-card">
+      <span class="module-icon">〰️</span>
+      <div class="module-name">adaptive_tremor.py</div>
+      <div class="module-desc">FFT-based tremor baseline learning with real-time matched-noise injection.</div>
+      <span class="version-badge stable">v6.0</span>
+    </div>
+    <div class="module-card">
+      <span class="module-icon">⌨️</span>
+      <div class="module-name">keystroke_jitter.py</div>
+      <div class="module-desc">3-channel pink-noise IKI cascade defeating keystroke dynamics classifiers.</div>
+      <span class="version-badge stable">v6.0</span>
+    </div>
+    <div class="module-card">
+      <span class="module-icon">🧠</span>
+      <div class="module-name">task_classifier_v2.py</div>
+      <div class="module-desc">18-type context-aware task recognition for adaptive noise modulation.</div>
+      <span class="version-badge stable">v6.0</span>
+    </div>
+    <div class="module-card">
+      <span class="module-icon">🛡️</span>
+      <div class="module-name">gradient_auditor.py</div>
+      <div class="module-desc">92% federated learning poisoning detection via gradient norm auditing.</div>
+      <span class="version-badge stable">v6.0</span>
+    </div>
+    <div class="module-card">
+      <span class="module-icon">🔐</span>
+      <div class="module-name">differential_privacy.py</div>
+      <div class="module-desc">Formal ε-DP guarantees via Laplace/Gaussian mechanisms + Rényi DP accounting.</div>
+      <span class="version-badge new">★ NEW v6.1</span>
+    </div>
+    <div class="module-card">
+      <span class="module-icon">🎭</span>
+      <div class="module-name">persona_engine.py</div>
+      <div class="module-desc">Stateful cross-session synthetic persona defeating longitudinal re-identification.</div>
+      <span class="version-badge new">★ NEW v6.1</span>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ===== NEURORIGHTS ===== -->
+<section id="neurorights" class="fade-in">
+  <div class="neurorights-inner">
+    <div class="neurorights-block">
+      <h2 class="neurorights-title">The mind is the last frontier.<br>We're building the walls.</h2>
+      <p class="neurorights-quote">"While encryption protects what you say,<br>nothing protects how you move."</p>
+      <a href="neurorights-2026.html" class="neurorights-link">
+        Read: State of Neurotechnology, February 2026 →
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <span>Cognitive Canary v6.1</span> &nbsp;·&nbsp; Artifex Labs &nbsp;·&nbsp; MIT License &nbsp;·&nbsp; all rights reserved 2026
+</footer>
+
+<script>
+/* ================================================================
+   NEURAL BACKGROUND
+================================================================ */
+(function() {
+  const canvas = document.getElementById('neural-bg');
+  const ctx = canvas.getContext('2d');
+  const N = 60;
+  let nodes = [];
+  let W, H;
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  for (let i = 0; i < N; i++) {
+    nodes.push({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.4,
+      r: Math.random() * 2 + 1,
+      phase: Math.random() * Math.PI * 2,
+      pulse: Math.random() * 0.02 + 0.008,
+    });
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    const t = Date.now() / 1000;
+
+    for (let i = 0; i < N; i++) {
+      const a = nodes[i];
+      a.x += a.vx;
+      a.y += a.vy;
+      if (a.x < 0 || a.x > W) a.vx *= -1;
+      if (a.y < 0 || a.y > H) a.vy *= -1;
+
+      for (let j = i + 1; j < N; j++) {
+        const b = nodes[j];
+        const dx = a.x - b.x, dy = a.y - b.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 150) {
+          const alpha = (1 - dist / 150) * 0.35;
+          const grad = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+          grad.addColorStop(0, `rgba(0,255,136,${alpha})`);
+          grad.addColorStop(1, `rgba(0,212,255,${alpha})`);
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = 0.8;
+          ctx.stroke();
+        }
+      }
+    }
+
+    for (let i = 0; i < N; i++) {
+      const n = nodes[i];
+      const pulse = 0.5 + 0.5 * Math.sin(t * n.pulse * 60 + n.phase);
+      const alpha = 0.4 + 0.5 * pulse;
+      const isGreen = i % 3 !== 0;
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r + pulse * 1.2, 0, Math.PI * 2);
+      ctx.fillStyle = isGreen ? `rgba(0,255,136,${alpha})` : `rgba(0,212,255,${alpha})`;
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = isGreen ? '#00ff88' : '#00d4ff';
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ================================================================
+   TYPEWRITER
+================================================================ */
+(function() {
+  const lines = [
+    "We didn't hack the password.",
+    "We hacked the inference.",
+    "Protect your behavioral fingerprint.",
+    "Defend cognitive sovereignty."
+  ];
+  const el = document.getElementById('typewriter');
+  let li = 0, ci = 0, deleting = false, wait = 0;
+
+  function tick() {
+    if (wait > 0) { wait--; setTimeout(tick, 50); return; }
+    const line = lines[li];
+    if (!deleting) {
+      ci++;
+      el.textContent = line.slice(0, ci);
+      if (ci >= line.length) { deleting = true; wait = 40; }
+      setTimeout(tick, 55);
+    } else {
+      ci--;
+      el.textContent = line.slice(0, ci);
+      if (ci <= 0) { deleting = false; li = (li + 1) % lines.length; wait = 8; }
+      setTimeout(tick, 28);
+    }
+  }
+  tick();
+})();
+
+/* ================================================================
+   FADE IN OBSERVER
+================================================================ */
+(function() {
+  const els = document.querySelectorAll('.fade-in');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.08 });
+  els.forEach(el => obs.observe(el));
+})();
+
+/* ================================================================
+   DEMO 1 — LISSAJOUS 3D PATHTRACER
+================================================================ */
+(function() {
+  const canvas = document.getElementById('c1');
+  const ctx = canvas.getContext('2d');
+  let W, H;
+
+  function resize() {
+    const rect = canvas.getBoundingClientRect();
+    W = canvas.width = rect.width * window.devicePixelRatio;
+    H = canvas.height = 280 * window.devicePixelRatio;
+    canvas.style.height = '280px';
+    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    W = canvas.width / window.devicePixelRatio;
+    H = 280;
+  }
+
+  const speedEl = document.getElementById('s1-speed');
+  const trailEl = document.getElementById('s1-trail');
+  const speedVal = document.getElementById('s1-speed-val');
+  const trailVal = document.getElementById('s1-trail-val');
+  const entropyEl = document.getElementById('d1-entropy');
+
+  speedEl.addEventListener('input', () => speedVal.textContent = speedEl.value);
+  trailEl.addEventListener('input', () => trailVal.textContent = trailEl.value);
+
+  let t = 0;
+  const trail = [];
+
+  function getPoint(time) {
+    const x = Math.sin(13 * time + Math.PI / 2);
+    const y = Math.sin(8 * time);
+    const z = Math.sin(5 * time + Math.PI / 4);
+    return { x, y, z };
+  }
+
+  function computeEntropy() {
+    const bins = new Array(16).fill(0);
+    for (let i = 0; i < trail.length; i++) {
+      const idx = Math.floor(((trail[i].x + 1) / 2) * 15.99);
+      bins[idx]++;
+    }
+    let entropy = 0;
+    const total = trail.length || 1;
+    bins.forEach(b => {
+      if (b > 0) {
+        const p = b / total;
+        entropy -= p * Math.log(p);
+      }
+    });
+    return entropy;
+  }
+
+  let scanY = 0;
+
+  function draw() {
+    const speed = parseFloat(speedEl.value) * 0.0003;
+    const maxTrail = parseInt(trailEl.value);
+    t += speed;
+
+    const p = getPoint(t);
+    trail.push(p);
+    if (trail.length > maxTrail) trail.shift();
+
+    const W2 = W / 2, H2 = H / 2;
+    const scaleX = W2 * 0.42, scaleY = H2 * 0.42;
+
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#030312';
+    ctx.fillRect(0, 0, W, H);
+
+    // Scan line
+    scanY += 0.8;
+    if (scanY > H + 20) scanY = -20;
+    const sg = ctx.createLinearGradient(0, scanY - 10, 0, scanY + 10);
+    sg.addColorStop(0, 'rgba(0,255,136,0)');
+    sg.addColorStop(0.5, 'rgba(0,255,136,0.06)');
+    sg.addColorStop(1, 'rgba(0,255,136,0)');
+    ctx.fillStyle = sg;
+    ctx.fillRect(0, scanY - 10, W, 20);
+
+    // Grid
+    ctx.strokeStyle = 'rgba(0,255,136,0.05)';
+    ctx.lineWidth = 1;
+    for (let gx = 0; gx <= W; gx += 40) {
+      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke();
+    }
+    for (let gy = 0; gy <= H; gy += 40) {
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke();
+    }
+
+    // Trail
+    for (let i = 1; i < trail.length; i++) {
+      const pt = trail[i];
+      const prev = trail[i - 1];
+      const alpha = i / trail.length;
+      const z = (pt.z + 1) / 2;
+
+      const r = Math.floor(0 + z * 0);
+      const g = Math.floor(255 - z * (255 - 212));
+      const b = Math.floor(136 + z * (255 - 136));
+
+      ctx.beginPath();
+      ctx.moveTo(W2 + prev.x * scaleX, H2 + prev.y * scaleY);
+      ctx.lineTo(W2 + pt.x * scaleX, H2 + pt.y * scaleY);
+      ctx.strokeStyle = `rgba(${r},${g},${b},${alpha * 0.9})`;
+      ctx.lineWidth = 1.5;
+      ctx.shadowBlur = z * 10 + 4;
+      ctx.shadowColor = `rgb(${r},${g},${b})`;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+    }
+
+    // Head dot
+    if (trail.length > 0) {
+      const head = trail[trail.length - 1];
+      const hx = W2 + head.x * scaleX;
+      const hy = H2 + head.y * scaleY;
+      ctx.beginPath();
+      ctx.arc(hx, hy, 4, 0, Math.PI * 2);
+      ctx.fillStyle = '#fff';
+      ctx.shadowBlur = 16;
+      ctx.shadowColor = '#00ff88';
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
+    // Entropy
+    if (trail.length > 50) {
+      const e = computeEntropy();
+      entropyEl.textContent = e.toFixed(2);
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('load', () => { resize(); draw(); });
+  window.addEventListener('resize', resize);
+  resize(); draw();
+})();
+
+/* ================================================================
+   DEMO 2 — KEYSTROKE JITTER HISTOGRAM
+================================================================ */
+(function() {
+  const canvas = document.getElementById('c2');
+  const ctx = canvas.getContext('2d');
+  let W, H;
+
+  function resize() {
+    const rect = canvas.getBoundingClientRect();
+    W = canvas.width = rect.width * (window.devicePixelRatio || 1);
+    canvas.style.height = '220px';
+    H = canvas.height = 220 * (window.devicePixelRatio || 1);
+    ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
+    W = canvas.width / (window.devicePixelRatio || 1);
+    H = 220;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  let protected_mode = false;
+  let transitionT = 0;
+  const toggleBtn = document.getElementById('d2-toggle');
+  const modeEl = document.getElementById('d2-mode');
+  const badgeEl = document.getElementById('d2-badge');
+
+  toggleBtn.addEventListener('click', () => {
+    protected_mode = !protected_mode;
+    modeEl.textContent = protected_mode ? 'PROTECTED' : 'UNPROTECTED';
+    modeEl.style.color = protected_mode ? 'var(--green)' : '#ff8866';
+    toggleBtn.classList.toggle('active', protected_mode);
+    if (protected_mode) {
+      badgeEl.style.display = 'inline-block';
+      badgeEl.className = 'badge-attack';
+      badgeEl.textContent = 'Attack Evasion: 99.3%';
+    } else {
+      badgeEl.style.display = 'none';
+    }
+  });
+
+  function rawBars() {
+    const bins = 20;
+    const result = [];
+    for (let i = 0; i < bins; i++) {
+      const center = 150;
+      const x = (i / bins) * 300 + 30;
+      const dist = Math.abs(x - center);
+      result.push(Math.exp(-dist * dist / 280) * 0.95);
+    }
+    return result;
+  }
+
+  function protectedBars(seed) {
+    const bins = 20;
+    const result = [];
+    for (let i = 0; i < bins; i++) {
+      const center = 150;
+      const x = (i / bins) * 300 + 30;
+      const dist = Math.abs(x - center);
+      const gauss = Math.exp(-dist * dist / 2200);
+      const pink = 0.12 * Math.sin(i * 2.1 + seed) + 0.08 * Math.sin(i * 4.7 + seed * 1.3);
+      result.push(Math.max(0, gauss * 0.7 + pink + 0.05));
+    }
+    return result;
+  }
+
+  let animT = 0;
+
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  function draw() {
+    animT += 0.025;
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#030312';
+    ctx.fillRect(0, 0, W, H);
+
+    const raw = rawBars();
+    const prot = protectedBars(animT * 0.5);
+    const bins = raw.length;
+    const halfW = W / 2;
+    const padX = 24, padY = 20, barGap = 2;
+    const maxH = H - padY * 2 - 24;
+
+    function drawHistogram(bars, ox, label, color, isProtected) {
+      const bw = (halfW - padX * 2) / bins;
+      ctx.fillStyle = color + '33';
+      ctx.strokeStyle = color;
+      ctx.font = `bold 11px 'Courier New', monospace`;
+      ctx.fillStyle = color;
+      ctx.fillText(label, ox + padX, 16);
+
+      for (let i = 0; i < bins; i++) {
+        const osc = isProtected ? 1 : (1 + 0.03 * Math.sin(animT * 3 + i));
+        const h = bars[i] * maxH * osc;
+        const x = ox + padX + i * bw + barGap / 2;
+        const y = H - padY - h;
+        const bwActual = bw - barGap;
+
+        const grad = ctx.createLinearGradient(x, y, x, H - padY);
+        grad.addColorStop(0, color);
+        grad.addColorStop(1, color + '44');
+        ctx.fillStyle = grad;
+        ctx.shadowBlur = isProtected && protected_mode ? 6 : 0;
+        ctx.shadowColor = color;
+        ctx.fillRect(x, y, bwActual, h);
+        ctx.shadowBlur = 0;
+      }
+
+      // Axis
+      ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(ox + padX, H - padY);
+      ctx.lineTo(ox + halfW - padX, H - padY);
+      ctx.stroke();
+
+      ctx.fillStyle = 'rgba(255,255,255,0.3)';
+      ctx.font = `10px 'Courier New', monospace`;
+      ctx.fillText('30ms', ox + padX, H - 5);
+      ctx.fillText('150ms', ox + halfW / 2 - 10, H - 5);
+      ctx.fillText('330ms', ox + halfW - padX - 24, H - 5);
+    }
+
+    drawHistogram(
+      protected_mode ? prot : raw.map((v, i) => v * (1 + 0.025 * Math.sin(animT * 2 + i))),
+      0, 'Raw IKI Distribution', '#ff8866', false
+    );
+    drawHistogram(
+      protected_mode ? prot : raw.map(v => v * 0.98),
+      halfW, 'Protected IKI Distribution', protected_mode ? '#00ff88' : '#00d4ff88', protected_mode
+    );
+
+    // Center divider
+    ctx.strokeStyle = 'rgba(0,255,136,0.15)';
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(halfW, 0);
+    ctx.lineTo(halfW, H);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ================================================================
+   DEMO 3 — DIFFERENTIAL PRIVACY GAUGE
+================================================================ */
+(function() {
+  const canvas = document.getElementById('c3');
+  const ctx = canvas.getContext('2d');
+  let W, H;
+
+  function resize() {
+    const rect = canvas.getBoundingClientRect();
+    W = canvas.width = rect.width * (window.devicePixelRatio || 1);
+    canvas.style.height = '280px';
+    H = canvas.height = 280 * (window.devicePixelRatio || 1);
+    ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
+    W = canvas.width / (window.devicePixelRatio || 1);
+    H = 280;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  let queries = 0;
+  let basicEps = 0, renyiEps = 0;
+  let targetBasic = 0, targetRenyi = 0;
+  let animBasic = 0, animRenyi = 0;
+
+  const queryBtn = document.getElementById('d3-query');
+  const resetBtn = document.getElementById('d3-reset');
+  const basicEl = document.getElementById('d3-basic');
+  const renyiEl = document.getElementById('d3-renyi');
+  const queriesEl = document.getElementById('d3-queries');
+
+  const EPS_PER_QUERY = 0.085;
+  const RENYI_PER_QUERY = 0.038;
+
+  queryBtn.addEventListener('click', () => {
+    queries += 10;
+    targetBasic = Math.min(queries * EPS_PER_QUERY, 1.0);
+    targetRenyi = Math.min(queries * RENYI_PER_QUERY, 1.0);
+    queriesEl.textContent = queries;
+  });
+
+  resetBtn.addEventListener('click', () => {
+    queries = 0;
+    targetBasic = 0; targetRenyi = 0;
+    animBasic = 0; animRenyi = 0;
+    queriesEl.textContent = 0;
+    basicEl.textContent = '0.00';
+    renyiEl.textContent = '0.00';
+  });
+
+  function gaugeColor(eps) {
+    if (eps < 0.5) return '#00ff88';
+    if (eps < 0.8) return '#ffaa00';
+    return '#ff4466';
+  }
+
+  function drawGauge(cx, cy, radius, eps, label, color) {
+    const startAngle = Math.PI * 0.75;
+    const endAngle = Math.PI * 2.25;
+    const range = endAngle - startAngle;
+
+    // Background arc
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, startAngle, endAngle);
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+    ctx.lineWidth = 14;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+
+    // Filled arc
+    if (eps > 0) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, startAngle, startAngle + range * eps);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 14;
+      ctx.lineCap = 'round';
+      ctx.shadowBlur = 16;
+      ctx.shadowColor = color;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+    }
+
+    // Ticks
+    for (let i = 0; i <= 10; i++) {
+      const angle = startAngle + (i / 10) * range;
+      const inner = radius - 20;
+      const outer = radius - 10;
+      ctx.beginPath();
+      ctx.moveTo(cx + Math.cos(angle) * inner, cy + Math.sin(angle) * inner);
+      ctx.lineTo(cx + Math.cos(angle) * outer, cy + Math.sin(angle) * outer);
+      ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    // Center text
+    ctx.fillStyle = color;
+    ctx.font = `bold ${Math.floor(radius * 0.38)}px 'Courier New', monospace`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.shadowBlur = 8;
+    ctx.shadowColor = color;
+    ctx.fillText(eps.toFixed(2), cx, cy - 8);
+    ctx.shadowBlur = 0;
+
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.font = `11px 'Courier New', monospace`;
+    ctx.fillText(label, cx, cy + radius * 0.38);
+    ctx.textBaseline = 'alphabetic';
+    ctx.textAlign = 'left';
+  }
+
+  function draw() {
+    animBasic += (targetBasic - animBasic) * 0.06;
+    animRenyi += (targetRenyi - animRenyi) * 0.06;
+
+    basicEl.textContent = animBasic.toFixed(3);
+    renyiEl.textContent = animRenyi.toFixed(3);
+
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#030312';
+    ctx.fillRect(0, 0, W, H);
+
+    const isMobile = W < 500;
+    const gaugeR = isMobile ? 70 : 90;
+
+    if (isMobile) {
+      drawGauge(W * 0.3, H * 0.55, gaugeR, animBasic, 'Basic ε', gaugeColor(animBasic));
+      drawGauge(W * 0.72, H * 0.55, gaugeR, animRenyi, 'Rényi ε', gaugeColor(animRenyi));
+    } else {
+      drawGauge(W * 0.28, H * 0.58, gaugeR, animBasic, 'Basic Comp. ε', gaugeColor(animBasic));
+      drawGauge(W * 0.72, H * 0.58, gaugeR, animRenyi, 'Rényi DP ε', gaugeColor(animRenyi));
+    }
+
+    // Labels
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.font = `12px 'Courier New', monospace`;
+    ctx.textAlign = 'center';
+    ctx.fillText('Basic Composition', W * 0.28, H * 0.94);
+    ctx.fillStyle = 'var(--cyan)';
+    ctx.fillText('Rényi DP  (up to √k tighter)', W * 0.72, H * 0.94);
+
+    // Gap annotation
+    if (animBasic > 0.05 && animRenyi > 0.02) {
+      const gap = (animBasic - animRenyi).toFixed(3);
+      ctx.fillStyle = '#00ff88';
+      ctx.font = `bold 11px 'Courier New', monospace`;
+      ctx.textAlign = 'center';
+      ctx.fillText(`Δε savings: ${gap}`, W * 0.5, H * 0.12);
+    }
+
+    ctx.textAlign = 'left';
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ================================================================
+   DEMO 4 — NEURAL THREAT SCANNER
+================================================================ */
+(function() {
+  const canvas = document.getElementById('c4');
+  const ctx = canvas.getContext('2d');
+  let W, H;
+
+  function resize() {
+    const rect = canvas.getBoundingClientRect();
+    W = canvas.width = rect.width * (window.devicePixelRatio || 1);
+    canvas.style.height = '240px';
+    H = canvas.height = 240 * (window.devicePixelRatio || 1);
+    ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
+    W = canvas.width / (window.devicePixelRatio || 1);
+    H = 240;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const threats = [
+    { label: 'Cursor Fingerprint', rawVal: 0.82, safeVal: 0.06 },
+    { label: 'Keystroke Dynamics', rawVal: 0.76, safeVal: 0.04 },
+    { label: 'Temporal Correlation', rawVal: 0.68, safeVal: 0.09 },
+    { label: 'FL Poisoning', rawVal: 0.91, safeVal: 0.07 },
+  ];
+
+  let activated = false;
+  let animVals = threats.map(t => t.rawVal);
+  let pulseT = 0;
+
+  const toggleBtn = document.getElementById('d4-toggle');
+  const statusEl = document.getElementById('d4-status');
+
+  toggleBtn.addEventListener('click', () => {
+    activated = !activated;
+    toggleBtn.textContent = activated ? 'Deactivate Canary' : 'Activate Canary';
+    toggleBtn.classList.toggle('active', activated);
+    statusEl.textContent = activated ? 'PROTECTED' : 'EXPOSED';
+    statusEl.style.color = activated ? 'var(--green)' : '#ff4466';
+  });
+
+  function draw() {
+    pulseT += 0.05;
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#030312';
+    ctx.fillRect(0, 0, W, H);
+
+    const n = threats.length;
+    const barH = 28;
+    const padX = 160;
+    const padY = 30;
+    const spacing = (H - padY * 2) / n;
+
+    threats.forEach((t, i) => {
+      const target = activated ? t.safeVal : t.rawVal;
+      animVals[i] += (target - animVals[i]) * 0.04;
+      const v = animVals[i];
+
+      const y = padY + i * spacing + spacing / 2 - barH / 2;
+      const barW = (W - padX - 24) * v;
+
+      // Label
+      ctx.fillStyle = 'rgba(255,255,255,0.7)';
+      ctx.font = `12px 'Courier New', monospace`;
+      ctx.textAlign = 'right';
+      ctx.fillText(t.label, padX - 12, y + barH / 2 + 4);
+
+      // Background
+      ctx.fillStyle = 'rgba(255,255,255,0.04)';
+      ctx.fillRect(padX, y, W - padX - 24, barH);
+
+      // Bar
+      const danger = v > 0.5;
+      const pulse = danger && !activated ? 0.15 * Math.sin(pulseT * 3 + i) : 0;
+      const barColor = activated
+        ? `rgba(0,255,136,${0.85 + pulse})`
+        : v > 0.75
+          ? `rgba(255,68,102,${0.9 + pulse})`
+          : `rgba(255,170,0,${0.85})`;
+
+      ctx.fillStyle = barColor;
+      ctx.shadowBlur = (danger && !activated) ? 12 + Math.abs(pulse) * 40 : activated ? 8 : 0;
+      ctx.shadowColor = barColor;
+      ctx.fillRect(padX, y, barW, barH);
+      ctx.shadowBlur = 0;
+
+      // Percent label
+      ctx.fillStyle = '#fff';
+      ctx.font = `bold 11px 'Courier New', monospace`;
+      ctx.textAlign = 'left';
+      ctx.fillText(`${Math.round(v * 100)}%`, padX + barW + 6, y + barH / 2 + 4);
+
+      // Safe/danger indicator
+      ctx.textAlign = 'right';
+      ctx.fillStyle = activated ? '#00ff88' : (v > 0.5 ? '#ff4466' : '#ffaa00');
+      ctx.font = `10px 'Courier New', monospace`;
+      ctx.fillText(activated ? '✓ SAFE' : '! RISK', W - 2, y + barH / 2 + 4);
+    });
+
+    ctx.textAlign = 'left';
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ================================================================
+   DEMO 5 — PERSONA COHERENCE TIMELINE
+================================================================ */
+(function() {
+  const canvas = document.getElementById('c5');
+  const ctx = canvas.getContext('2d');
+  let W, H;
+
+  function resize() {
+    const rect = canvas.getBoundingClientRect();
+    W = canvas.width = rect.width * (window.devicePixelRatio || 1);
+    canvas.style.height = '260px';
+    H = canvas.height = 260 * (window.devicePixelRatio || 1);
+    ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
+    W = canvas.width / (window.devicePixelRatio || 1);
+    H = 260;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  let personaEnabled = false;
+  const toggleBtn = document.getElementById('d5-toggle');
+  const addBtn = document.getElementById('d5-add');
+  const corrEl = document.getElementById('d5-corr');
+  const safeEl = document.getElementById('d5-safe');
+
+  const ROTATION_INTERVAL = 7;
+  let sessions = [];
+  let animDots = [];
+  let personaBaseline = 0.5;
+  let personaPhase = 0;
+  let currentPersonaCluster = 0;
+
+  function generateRawPoint(i) {
+    return 0.1 + Math.random() * 0.8;
+  }
+
+  function generatePersonaPoint(i) {
+    const rotBlock = Math.floor(i / ROTATION_INTERVAL);
+    const clusterCenter = (rotBlock * 0.37 + 0.28) % 0.85 + 0.07;
+    return clusterCenter + (Math.random() - 0.5) * 0.14;
+  }
+
+  // Pre-populate
+  for (let i = 0; i < 18; i++) {
+    sessions.push({ raw: generateRawPoint(i), persona: generatePersonaPoint(i), visible: true, alpha: 1 });
+  }
+
+  toggleBtn.addEventListener('click', () => {
+    personaEnabled = !personaEnabled;
+    toggleBtn.textContent = personaEnabled ? 'Disable Persona Engine' : 'Enable Persona Engine';
+    toggleBtn.classList.toggle('active', personaEnabled);
+
+    const corr = personaEnabled ? (0.38 + Math.random() * 0.08).toFixed(2) : (0.82 + Math.random() * 0.1).toFixed(2);
+    corrEl.textContent = corr;
+    if (personaEnabled) {
+      safeEl.textContent = '✓ SAFE';
+      safeEl.style.color = 'var(--green)';
+    } else {
+      safeEl.textContent = '✗ RISK';
+      safeEl.style.color = '#ff4466';
+    }
+  });
+
+  addBtn.addEventListener('click', () => {
+    const i = sessions.length;
+    sessions.push({
+      raw: generateRawPoint(i),
+      persona: generatePersonaPoint(i),
+      visible: true,
+      alpha: 0
+    });
+  });
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#030312';
+    ctx.fillRect(0, 0, W, H);
+
+    const padL = 40, padR = 20, padT = 24, padB = 30;
+    const plotW = W - padL - padR;
+    const plotH = H - padT - padB;
+    const n = sessions.length;
+    const maxSessions = Math.max(n, 20);
+
+    // Grid
+    ctx.strokeStyle = 'rgba(0,255,136,0.05)';
+    ctx.lineWidth = 1;
+    for (let gy = 0; gy <= 4; gy++) {
+      const py = padT + (gy / 4) * plotH;
+      ctx.beginPath(); ctx.moveTo(padL, py); ctx.lineTo(W - padR, py); ctx.stroke();
+    }
+
+    // Axes
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(padL, padT);
+    ctx.lineTo(padL, padT + plotH);
+    ctx.lineTo(padL + plotW, padT + plotH);
+    ctx.stroke();
+
+    // Axis labels
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.font = `10px 'Courier New', monospace`;
+    ctx.textAlign = 'center';
+    ctx.fillText('Session', padL + plotW / 2, H - 4);
+    ctx.save();
+    ctx.translate(12, padT + plotH / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText('Fingerprint', 0, 0);
+    ctx.restore();
+
+    // Rotation lines (persona mode)
+    if (personaEnabled) {
+      for (let r = ROTATION_INTERVAL; r < n; r += ROTATION_INTERVAL) {
+        const rx = padL + (r / maxSessions) * plotW;
+        ctx.strokeStyle = 'rgba(123,47,255,0.45)';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        ctx.moveTo(rx, padT);
+        ctx.lineTo(rx, padT + plotH);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = 'rgba(123,47,255,0.7)';
+        ctx.font = `9px 'Courier New', monospace`;
+        ctx.textAlign = 'center';
+        ctx.fillText('rotate', rx, padT + 10);
+      }
+    }
+
+    // Dots
+    sessions.forEach((s, i) => {
+      if (s.alpha < 1) s.alpha = Math.min(1, s.alpha + 0.06);
+      const x = padL + (i / maxSessions) * plotW;
+      const yVal = personaEnabled ? s.persona : s.raw;
+      const y = padT + (1 - yVal) * plotH;
+
+      if (personaEnabled) {
+        ctx.beginPath();
+        ctx.arc(x, y, 5, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(0,255,136,${s.alpha * 0.9})`;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = '#00ff88';
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      } else {
+        ctx.beginPath();
+        ctx.arc(x, y, 5, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,100,150,${s.alpha * 0.85})`;
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = '#ff4466';
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+    });
+
+    // Cluster hull (persona mode)
+    if (personaEnabled && sessions.length > 3) {
+      const blocks = Math.ceil(sessions.length / ROTATION_INTERVAL);
+      for (let b = 0; b < blocks; b++) {
+        const startI = b * ROTATION_INTERVAL;
+        const endI = Math.min(startI + ROTATION_INTERVAL, sessions.length);
+        if (endI - startI < 2) continue;
+        const xs = [], ys = [];
+        for (let i = startI; i < endI; i++) {
+          xs.push(padL + (i / maxSessions) * plotW);
+          ys.push(padT + (1 - sessions[i].persona) * plotH);
+        }
+        const minX = Math.min(...xs) - 8, maxX = Math.max(...xs) + 8;
+        const minY = Math.min(...ys) - 8, maxY = Math.max(...ys) + 8;
+        ctx.strokeStyle = 'rgba(0,255,136,0.15)';
+        ctx.fillStyle = 'rgba(0,255,136,0.04)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect ? ctx.roundRect(minX, minY, maxX - minX, maxY - minY, 6) :
+          ctx.rect(minX, minY, maxX - minX, maxY - minY);
+        ctx.fill();
+        ctx.stroke();
+      }
+    }
+
+    ctx.textAlign = 'left';
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ================================================================
+   RESIZE OBSERVER FOR DEMO CANVASES
+================================================================ */
+(function() {
+  if (!window.ResizeObserver) return;
+  const ids = ['c1', 'c2', 'c3', 'c4', 'c5'];
+  ids.forEach(id => {
+    const c = document.getElementById(id);
+    if (!c) return;
+    const ro = new ResizeObserver(() => {
+      // Trigger a passive resize - the individual draw loops handle it
+    });
+    ro.observe(c.parentElement);
+  });
+})();
+</script>
+</body>
+</html>
