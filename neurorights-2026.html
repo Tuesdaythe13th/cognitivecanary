@@ -819,6 +819,77 @@
     .nbio-compare-col.conventional ul li::before { content: '✗ '; color: #ff6060; }
     .nbio-compare-col.neural ul li::before { content: '! '; color: #ffaa40; font-family: var(--mono); }
 
+    /* ── Transit & NBio Canvas Demos ────────────────────────────────── */
+    .viz-panel {
+      background: rgba(5,5,20,0.9);
+      border: 1px solid rgba(0,212,255,0.2);
+      border-radius: var(--radius);
+      padding: 1.2rem 1.4rem 1rem;
+      margin: 1.5rem 0 0.5rem;
+    }
+    .viz-label {
+      font-family: var(--mono);
+      font-size: 0.67rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 0.6rem;
+    }
+    .viz-canvas {
+      width: 100%;
+      display: block;
+      border-radius: 6px;
+      background: rgba(0,0,0,0.4);
+    }
+    .viz-controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 0.7rem;
+      flex-wrap: wrap;
+    }
+    .viz-btn {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      padding: 0.35rem 0.9rem;
+      border-radius: 5px;
+      border: 1px solid rgba(0,212,255,0.4);
+      background: rgba(0,212,255,0.08);
+      color: var(--cyan);
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .viz-btn:hover { background: rgba(0,212,255,0.18); border-color: var(--cyan); }
+    .viz-btn.danger { border-color: rgba(255,60,60,0.4); background: rgba(255,60,60,0.08); color: #ff8080; }
+    .viz-btn.danger:hover { background: rgba(255,60,60,0.2); }
+    .viz-stat {
+      font-family: var(--mono);
+      font-size: 0.73rem;
+      color: var(--muted);
+    }
+    .viz-stat span { color: var(--green); }
+    .viz-stat span.danger { color: #ff6060; }
+
+    /* ── CS card stagger entrance ────────────────────────────────────── */
+    .cs-card { opacity: 0; transform: translateY(18px); transition: opacity 0.45s ease, transform 0.45s ease; }
+    .cs-card.visible { opacity: 1; transform: translateY(0); }
+    .nbio-item { opacity: 0; transform: translateY(14px); transition: opacity 0.4s ease, transform 0.4s ease; }
+    .nbio-item.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── Nbio panel pulse glow ───────────────────────────────────────── */
+    @keyframes nbio-glow {
+      0%, 100% { box-shadow: 0 0 18px rgba(123,47,255,0.15), 0 0 1px rgba(123,47,255,0.3); }
+      50%       { box-shadow: 0 0 38px rgba(123,47,255,0.35), 0 0 1px rgba(123,47,255,0.6); }
+    }
+    .nbio-panel { animation: nbio-glow 3.5s ease-in-out infinite; }
+
+    /* ── Paper card entrance ─────────────────────────────────────────── */
+    .paper-card { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
+    .paper-card.visible { opacity: 1; transform: translateY(0); }
+    .dc-card { opacity: 0; transform: translateY(14px); transition: opacity 0.4s ease, transform 0.4s ease; }
+    .dc-card.visible { opacity: 1; transform: translateY(0); }
+
     @media (max-width: 640px) {
       .nbio-compare { grid-template-columns: 1fr; }
       .spectrum-bar { flex-direction: column; min-width: 0; }
@@ -1617,6 +1688,18 @@
       </div>
 
     </div>
+
+    <!-- Transit Attack Live Demo -->
+    <div class="viz-panel fade-in" id="transit-panel">
+      <div class="viz-label">&#9655; Live Demo &mdash; Neural Data in Transit: MITM Attack Simulation</div>
+      <canvas class="viz-canvas" id="transit-canvas" height="180"></canvas>
+      <div class="viz-controls">
+        <button class="viz-btn danger" id="transit-attack-btn">&#9888; Inject Attacker</button>
+        <button class="viz-btn" id="transit-protect-btn">&#9650; Enable NeuralMask</button>
+        <span class="viz-stat" id="transit-status">Status: <span>CHANNEL OPEN</span></span>
+        <span class="viz-stat">Packets intercepted: <span id="transit-intercepted" class="danger">0</span></span>
+      </div>
+    </div>
   </div>
 
   <!-- ── 7.2 Reinforcement & Behavioral Conditioning ── -->
@@ -2130,6 +2213,17 @@
           </div>
         </div>
       </div>
+
+      <!-- Neural Fingerprint Shield Canvas -->
+      <div style="margin-top:1.6rem;">
+        <div class="viz-label">&#9655; Live Demo &mdash; EEG Neural Fingerprint: Before vs. After NeuralMask&#x2122;</div>
+        <canvas class="viz-canvas" id="nbio-canvas" height="160"></canvas>
+        <div class="viz-controls">
+          <button class="viz-btn" id="nbio-protect-btn">&#128274; Toggle NeuralMask</button>
+          <span class="viz-stat">Re-ID similarity: <span id="nbio-similarity">97.6%</span></span>
+          <span class="viz-stat">ε budget consumed: <span id="nbio-eps">0.00</span></span>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -2370,6 +2464,308 @@
       }, i * 150 + 200);
     });
   }, 0.05);
+
+  /* ── Stagger cs-cards ──────────────────────────────────────────────── */
+  (function () {
+    var grids = document.querySelectorAll('.cs-grid');
+    if (!grids.length) return;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          var cards = entry.target.querySelectorAll('.cs-card');
+          cards.forEach(function (c, i) {
+            setTimeout(function () { c.classList.add('visible'); }, i * 90);
+          });
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.05 });
+    grids.forEach(function (g) { io.observe(g); });
+  }());
+
+  /* ── Stagger paper-cards & dc-cards ────────────────────────────────── */
+  (function () {
+    function staggerChildren(parentSel, childSel, delay) {
+      var parents = document.querySelectorAll(parentSel);
+      if (!parents.length) return;
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            var kids = entry.target.querySelectorAll(childSel);
+            kids.forEach(function (k, i) {
+              setTimeout(function () { k.classList.add('visible'); }, i * delay);
+            });
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.05 });
+      parents.forEach(function (p) { io.observe(p); });
+    }
+    staggerChildren('.paper-duo', '.paper-card', 120);
+    staggerChildren('.device-compare', '.dc-card', 80);
+  }());
+
+  /* ── Stagger nbio-items ─────────────────────────────────────────────── */
+  (function () {
+    var grid = document.querySelector('.nbio-grid');
+    if (!grid) return;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          var items = entry.target.querySelectorAll('.nbio-item');
+          items.forEach(function (item, i) {
+            setTimeout(function () { item.classList.add('visible'); }, i * 75);
+          });
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.05 });
+    io.observe(grid);
+  }());
+
+  /* ── Transit Attack Canvas ──────────────────────────────────────────── */
+  (function () {
+    var canvas = document.getElementById('transit-canvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var W, H;
+    function resize() {
+      W = canvas.width = canvas.offsetWidth;
+      H = canvas.height = 180;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    var mode = 'open'; // 'open' | 'attack' | 'protected'
+    var packets = [];
+    var intercepted = 0;
+    var raf;
+
+    // Nodes: [EEG Device] -> [Phone] -> [Cloud]
+    // Attacker node appears between Phone and Cloud when mode=attack
+    function nodes() {
+      return {
+        device: { x: W * 0.1, y: H * 0.5, label: 'EEG Device', color: '#00d4ff' },
+        phone:  { x: W * 0.4, y: H * 0.5, label: 'BLE Bridge',  color: '#00d4ff' },
+        cloud:  { x: W * 0.75, y: H * 0.3, label: 'Cloud API',  color: mode === 'protected' ? '#00ff88' : '#00d4ff' },
+        attacker: { x: W * 0.75, y: H * 0.75, label: 'Attacker SDR', color: '#ff4466' }
+      };
+    }
+
+    function spawnPacket() {
+      var n = nodes();
+      var protected_mode = mode === 'protected';
+      packets.push({ x: n.device.x, y: n.device.y, progress: 0, phase: 0, intercepting: false, protected: protected_mode });
+    }
+
+    var spawnTimer = 0;
+    var lastTime = 0;
+
+    function draw(ts) {
+      var dt = Math.min((ts - lastTime) / 1000, 0.05);
+      lastTime = ts;
+      ctx.clearRect(0, 0, W, H);
+
+      var n = nodes();
+
+      // Draw paths
+      function drawPath(a, b, color, dashed) {
+        ctx.beginPath();
+        if (dashed) ctx.setLineDash([6, 4]);
+        else ctx.setLineDash([]);
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      drawPath(n.device, n.phone, 'rgba(0,212,255,0.35)');
+      drawPath(n.phone, n.cloud, mode === 'attack' ? 'rgba(0,212,255,0.2)' : 'rgba(0,212,255,0.35)');
+      if (mode === 'attack') {
+        drawPath(n.phone, n.attacker, 'rgba(255,68,102,0.5)', false);
+      }
+
+      // Labels for attack mode
+      if (mode === 'attack') {
+        ctx.fillStyle = 'rgba(255,68,102,0.7)';
+        ctx.font = '500 10px Courier New';
+        ctx.textAlign = 'center';
+        ctx.fillText('MITM ACTIVE', (n.phone.x + n.attacker.x) / 2, n.attacker.y - 10);
+      }
+
+      // Draw nodes
+      function drawNode(nd, radius) {
+        ctx.beginPath();
+        ctx.arc(nd.x, nd.y, radius || 14, 0, Math.PI * 2);
+        ctx.fillStyle = nd.color + '22';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(nd.x, nd.y, radius || 14, 0, Math.PI * 2);
+        ctx.strokeStyle = nd.color;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.fillStyle = nd.color;
+        ctx.font = '600 9px Courier New';
+        ctx.textAlign = 'center';
+        ctx.fillText(nd.label, nd.x, nd.y + (radius || 14) + 13);
+      }
+
+      drawNode(n.device);
+      drawNode(n.phone);
+      drawNode(n.cloud);
+      if (mode === 'attack') drawNode(n.attacker, 12);
+
+      // Spawn packets
+      spawnTimer += dt;
+      if (spawnTimer > 0.7) { spawnPacket(); spawnTimer = 0; }
+
+      // Update & draw packets
+      packets = packets.filter(function (p) { return p.progress < 1; });
+      packets.forEach(function (pk) {
+        pk.progress += dt * 0.55;
+        var from, to;
+        if (pk.phase === 0) {
+          from = n.device; to = n.phone;
+          if (pk.progress >= 1) { pk.progress = 0; pk.phase = 1; }
+        } else {
+          if (mode === 'attack' && !pk.protected) {
+            from = n.phone; to = n.attacker;
+            if (pk.progress >= 0.5 && !pk.intercepting) {
+              pk.intercepting = true;
+              intercepted++;
+              document.getElementById('transit-intercepted').textContent = intercepted;
+            }
+          } else {
+            from = n.phone; to = n.cloud;
+          }
+        }
+        var t = Math.sin(pk.progress * Math.PI * 0.5);
+        var x = from.x + (to.x - from.x) * t;
+        var y = from.y + (to.y - from.y) * t;
+        var color = mode === 'attack' && pk.phase === 1 && !pk.protected ? '#ff4466' :
+                    pk.protected ? '#00ff88' : '#00d4ff';
+        ctx.beginPath();
+        ctx.arc(x, y, pk.protected ? 5 : 4, 0, Math.PI * 2);
+        ctx.fillStyle = color + 'cc';
+        ctx.fill();
+        // glow
+        ctx.beginPath();
+        ctx.arc(x, y, 9, 0, Math.PI * 2);
+        ctx.fillStyle = color + '22';
+        ctx.fill();
+      });
+
+      raf = requestAnimationFrame(draw);
+    }
+
+    raf = requestAnimationFrame(draw);
+
+    document.getElementById('transit-attack-btn').addEventListener('click', function () {
+      mode = 'attack';
+      document.getElementById('transit-status').innerHTML = 'Status: <span class="danger">COMPROMISED</span>';
+    });
+    document.getElementById('transit-protect-btn').addEventListener('click', function () {
+      mode = 'protected';
+      intercepted = 0;
+      document.getElementById('transit-intercepted').textContent = '0';
+      document.getElementById('transit-status').innerHTML = 'Status: <span>PROTECTED ε-DP</span>';
+    });
+  }());
+
+  /* ── Neural Fingerprint Shield Canvas ──────────────────────────────── */
+  (function () {
+    var canvas = document.getElementById('nbio-canvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var W, H;
+    function resize() { W = canvas.width = canvas.offsetWidth; H = canvas.height = 160; }
+    resize();
+    window.addEventListener('resize', resize);
+
+    var masked = false;
+    var eps = 0;
+    var similarity = 0.976;
+    var t = 0;
+
+    // Generate characteristic "individual" EEG pattern
+    function eegY(x, seed, noiseAmp) {
+      var base = Math.sin(x * 0.055 + seed) * 0.45         // delta
+               + Math.sin(x * 0.12  + seed * 1.3) * 0.35   // theta
+               + Math.sin(x * 0.22  + seed * 0.7) * 0.5    // alpha (distinctive peak)
+               + Math.sin(x * 0.42  + seed * 1.7) * 0.2    // beta
+               + Math.sin(x * 1.1   + seed * 2.1) * 0.08;  // gamma
+      // Add individual "fingerprint" spikes
+      var spk = Math.exp(-Math.pow((x % 140 - 70), 2) / 80) * 0.6;
+      var noise = (Math.sin(x * 7.3 + seed * 5) + Math.sin(x * 13.7 + seed * 3)) * noiseAmp;
+      return (base + spk + noise) * (H * 0.16);
+    }
+
+    function drawEEG(offsetX, centerY, seed, color, label, noiseAmp) {
+      ctx.beginPath();
+      for (var x = 0; x < W / 2 - 20; x++) {
+        var y = centerY + eegY(x + t, seed, noiseAmp);
+        if (x === 0) ctx.moveTo(offsetX + x, y);
+        else ctx.lineTo(offsetX + x, y);
+      }
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.6;
+      ctx.stroke();
+
+      // Label
+      ctx.fillStyle = color + 'bb';
+      ctx.font = '700 9px Courier New';
+      ctx.textAlign = 'left';
+      ctx.fillText(label, offsetX + 4, 14);
+    }
+
+    function frame() {
+      t += 0.9;
+      ctx.clearRect(0, 0, W, H);
+
+      var midX = W / 2;
+      var cy = H / 2;
+
+      // Divider
+      ctx.beginPath();
+      ctx.moveTo(midX, 10); ctx.lineTo(midX, H - 10);
+      ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 4]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Left channel: raw individual EEG
+      drawEEG(10, cy, 1.0, '#00d4ff', 'RAW EEG (Individual Fingerprint)', 0.02);
+
+      // Right channel: masked
+      var noiseAmp = masked ? 0.55 : 0.02;
+      var maskColor = masked ? '#00ff88' : '#00d4ff';
+      drawEEG(midX + 10, cy, 1.0, maskColor, masked ? 'NeuralMask™ Protected' : 'UNPROTECTED COPY', noiseAmp);
+
+      // Similarity label
+      var simTarget = masked ? 0.024 : 0.976;
+      similarity += (simTarget - similarity) * 0.04;
+      if (masked && eps < 0.12) eps += 0.0008;
+
+      ctx.fillStyle = masked ? '#00ff88' : '#ff6060';
+      ctx.font = '700 11px Courier New';
+      ctx.textAlign = 'center';
+      ctx.fillText((similarity * 100).toFixed(1) + '% match', midX + (W / 4), H - 8);
+
+      document.getElementById('nbio-similarity').textContent = (similarity * 100).toFixed(1) + '%';
+      document.getElementById('nbio-eps').textContent = eps.toFixed(3);
+
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+
+    document.getElementById('nbio-protect-btn').addEventListener('click', function () {
+      masked = !masked;
+      this.textContent = masked ? '\uD83D\uDD13 Disable NeuralMask' : '\uD83D\uDD12 Toggle NeuralMask';
+    });
+  }());
 
   /* ── Active nav link on scroll ─────────────────────────────────────── */
   var sections = document.querySelectorAll('section[id]');

@@ -686,6 +686,19 @@
   <div class="updates-grid">
 
     <div class="update-card march">
+      <div class="update-date">March 4, 2026</div>
+      <div class="update-version">v6.2 &mdash; Cognitive Security &amp; Whitepaper Expansion</div>
+      <ul class="update-list">
+        <li><strong>Section 07: Cognitive Security &amp; Attack Surfaces</strong> added to neurorights-2026.html — 8 subsections, 970 lines.</li>
+        <li><strong>eeg_shield.py</strong>: 3-layer EEG surveillance defense (band normalization, phase scrambling, FGSM adversarial perturbation).</li>
+        <li><strong>neuro_audit.py</strong>: Multi-jurisdiction neurorights compliance engine (Chile, EU, Colorado, MIND Act).</li>
+        <li><strong>Research links:</strong> MIT Brain on ChatGPT (arXiv:2506.08872) + Meta Brain2Qwerty (arXiv:2502.17480) with live citations.</li>
+        <li><strong>Live demos:</strong> Neural MITM interceptor canvas, EEG fingerprint shield visualizer, reward loop amplifier.</li>
+        <li><strong>NEUROBIOMETRICS</strong> panel — irrevocability, involuntary disclosure, P300/ERN capture, no-revocation-path analysis.</li>
+      </ul>
+    </div>
+
+    <div class="update-card march">
       <div class="update-date">March 1, 2026</div>
       <div class="update-version">v6.1 &mdash; Formal Privacy Guarantees</div>
       <ul class="update-list">
@@ -718,7 +731,7 @@
 <section id="demos" class="fade-in">
   <div class="section" style="padding-bottom: 0;">
     <div class="section-header">Live Demos</div>
-    <h2 class="section-title">Five Defensive Mechanisms — In Action</h2>
+    <h2 class="section-title">Eight Defensive Mechanisms — In Action</h2>
   </div>
   <div style="max-width:1100px; margin:0 auto; padding: 0 24px 80px; display:flex; flex-direction:column; gap:32px;">
 
@@ -834,6 +847,72 @@
       </div>
     </div>
 
+    <!-- DEMO 6 -->
+    <div class="demo-card fade-in">
+      <div class="demo-header">
+        <div class="demo-num">Demo 06</div>
+        <div class="demo-title">Neural MITM Attack Interceptor</div>
+        <div class="demo-desc">BLE neural data in transit between EEG device, phone bridge, and cloud API. Watch an attacker SDR inject itself mid-stream — then activate NeuralMask ε-DP protection to seal the channel.</div>
+      </div>
+      <div class="demo-body">
+        <canvas class="demo-canvas" id="c6" height="200"></canvas>
+        <div class="demo-controls">
+          <button class="demo-btn" id="d6-attack" style="color:#ff8080;border-color:rgba(255,80,80,0.4);">&#9888; Inject Attacker</button>
+          <button class="demo-btn" id="d6-protect">&#128274; Enable NeuralMask</button>
+          <div class="demo-stat" style="margin-top:0;">Status: <span id="d6-status">OPEN</span></div>
+        </div>
+        <div class="demo-stat">
+          Packets in flight: <span id="d6-packets">0</span> &nbsp;|&nbsp;
+          Intercepted: <span id="d6-intercepted" style="color:#ff6060;">0</span> &nbsp;|&nbsp;
+          Protected: <span id="d6-protected">0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEMO 7 -->
+    <div class="demo-card fade-in">
+      <div class="demo-header">
+        <div class="demo-num">Demo 07</div>
+        <div class="demo-title">EEG Neural Fingerprint Shield</div>
+        <div class="demo-desc">Real-time comparison of raw EEG (left) vs NeuralMask™ protected stream (right). Individual alpha fingerprint is perturbed by adversarial noise injection — re-identification similarity collapses from 97.6% to &lt;3%.</div>
+      </div>
+      <div class="demo-body">
+        <canvas class="demo-canvas" id="c7" height="180"></canvas>
+        <div class="demo-controls">
+          <button class="demo-btn" id="d7-toggle">&#128274; Toggle NeuralMask</button>
+          <div class="demo-stat" style="margin-top:0;">Re-ID Match: <span id="d7-match">97.6%</span></div>
+        </div>
+        <div class="demo-stat">
+          Left channel: <span>RAW (individual fingerprint)</span> &nbsp;|&nbsp;
+          Right: <span id="d7-right">UNPROTECTED COPY</span> &nbsp;|&nbsp;
+          ε budget: <span id="d7-eps">0.000</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEMO 8 -->
+    <div class="demo-card fade-in">
+      <div class="demo-header">
+        <div class="demo-num">Demo 08</div>
+        <div class="demo-title">Reward Loop Amplification Detector</div>
+        <div class="demo-desc">Neural reward signal → algorithmic content selection → engagement amplification → repeat. Unprotected: loop gain accumulates with each cycle, driving behavioral conditioning. CognitiveShield™ detects and dampens runaway amplification.</div>
+      </div>
+      <div class="demo-body">
+        <canvas class="demo-canvas" id="c8" height="260"></canvas>
+        <div class="demo-controls">
+          <button class="demo-btn" id="d8-cycle">&#9654; Next Cycle</button>
+          <button class="demo-btn" id="d8-shield">&#9650; CognitiveShield™</button>
+          <button class="demo-btn" id="d8-reset">&#9654;&#9474; Reset</button>
+        </div>
+        <div class="demo-stat">
+          Cycle: <span id="d8-cycle-num">0</span> &nbsp;|&nbsp;
+          Loop Gain: <span id="d8-gain">1.00x</span> &nbsp;|&nbsp;
+          Cognitive Debt: <span id="d8-debt" style="color:#ffaa40;">0%</span> &nbsp;|&nbsp;
+          Shield: <span id="d8-shield-status">OFF</span>
+        </div>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -886,6 +965,18 @@
       <div class="module-desc">Stateful cross-session synthetic persona defeating longitudinal re-identification.</div>
       <span class="version-badge new">★ NEW v6.1</span>
     </div>
+    <div class="module-card">
+      <span class="module-icon">⚡</span>
+      <div class="module-name">eeg_shield.py</div>
+      <div class="module-desc">3-layer EEG surveillance defense: band normalization, phase scrambling, FGSM adversarial perturbation.</div>
+      <span class="version-badge new">★ NEW v6.2</span>
+    </div>
+    <div class="module-card">
+      <span class="module-icon">⚖️</span>
+      <div class="module-name">neuro_audit.py</div>
+      <div class="module-desc">Multi-jurisdiction neurorights compliance engine: Chile, EU AI Act, Colorado, UNESCO, MIND Act.</div>
+      <span class="version-badge new">★ NEW v6.2</span>
+    </div>
   </div>
 </section>
 
@@ -898,7 +989,7 @@
       <h2 class="neurorights-title">The mind is the last frontier.<br>We're building the walls.</h2>
       <p class="neurorights-quote">"While encryption protects what you say,<br>nothing protects how you move."</p>
       <a href="neurorights-2026.html" class="neurorights-link">
-        Read: State of Neurotechnology, February 2026 →
+        Read: State of Neurotechnology — Cognitive Security Edition, March 2026 →
       </a>
     </div>
   </div>
@@ -1772,11 +1863,323 @@
 })();
 
 /* ================================================================
+   DEMO 06 — Neural MITM Interceptor
+================================================================ */
+(function () {
+  var canvas = document.getElementById('c6');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var W, H;
+  function resize() { W = canvas.width = canvas.offsetWidth; H = canvas.height = 200; }
+  resize();
+  window.addEventListener('resize', resize);
+
+  var mode = 'open';
+  var packets = [], intercepted = 0, protected_count = 0;
+  var spawnT = 0, lastT = 0;
+
+  function getNodes() {
+    return {
+      dev: { x: W * 0.1,  y: H * 0.5,  label: 'EEG Device',  color: '#00d4ff' },
+      ble: { x: W * 0.38, y: H * 0.5,  label: 'BLE Bridge',   color: '#00d4ff' },
+      api: { x: W * 0.72, y: H * 0.3,  label: 'Cloud API',    color: mode === 'protected' ? '#00ff88' : '#00d4ff' },
+      atk: { x: W * 0.72, y: H * 0.73, label: 'Attacker SDR', color: '#ff4466' }
+    };
+  }
+
+  function drawNode(nd, r) {
+    r = r || 16;
+    ctx.beginPath(); ctx.arc(nd.x, nd.y, r, 0, Math.PI * 2);
+    ctx.fillStyle = nd.color + '18'; ctx.fill();
+    ctx.beginPath(); ctx.arc(nd.x, nd.y, r, 0, Math.PI * 2);
+    ctx.strokeStyle = nd.color; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = nd.color; ctx.font = '600 9px Courier New'; ctx.textAlign = 'center';
+    ctx.fillText(nd.label, nd.x, nd.y + r + 13);
+  }
+
+  function drawLine(a, b, col, dash) {
+    ctx.beginPath(); ctx.setLineDash(dash || []); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+    ctx.strokeStyle = col; ctx.lineWidth = 1.5; ctx.stroke(); ctx.setLineDash([]);
+  }
+
+  function frame(ts) {
+    var dt = Math.min((ts - lastT) / 1000, 0.05); lastT = ts;
+    ctx.clearRect(0, 0, W, H);
+    var n = getNodes();
+
+    drawLine(n.dev, n.ble, 'rgba(0,212,255,0.35)');
+    drawLine(n.ble, n.api, mode === 'attack' ? 'rgba(0,212,255,0.12)' : 'rgba(0,212,255,0.35)');
+    if (mode === 'attack') {
+      drawLine(n.ble, n.atk, 'rgba(255,68,102,0.5)');
+      ctx.fillStyle = 'rgba(255,68,102,0.8)'; ctx.font = '700 9px Courier New'; ctx.textAlign = 'center';
+      ctx.fillText('&#9888; MITM ACTIVE', (n.ble.x + n.atk.x) / 2, (n.ble.y + n.atk.y) / 2 - 8);
+    }
+    if (mode === 'protected') {
+      ctx.fillStyle = '#00ff8899'; ctx.font = '700 9px Courier New'; ctx.textAlign = 'center';
+      ctx.fillText('\u03b5-DP SEALED', (n.ble.x + n.api.x) / 2, (n.ble.y + n.api.y) / 2 - 8);
+    }
+
+    drawNode(n.dev); drawNode(n.ble); drawNode(n.api);
+    if (mode === 'attack') drawNode(n.atk, 13);
+
+    spawnT += dt;
+    if (spawnT > 0.65) { packets.push({ x: n.dev.x, y: n.dev.y, prog: 0, phase: 0, hit: false, prot: mode === 'protected' }); spawnT = 0; }
+
+    packets = packets.filter(function (p) { return p.prog < 1 || p.phase === 0; });
+    packets.forEach(function (pk) {
+      pk.prog = Math.min(pk.prog + dt * 0.6, 1);
+      var from, to;
+      if (pk.phase === 0) { from = n.dev; to = n.ble; if (pk.prog >= 1) { pk.prog = 0; pk.phase = 1; } }
+      else { from = n.ble; to = mode === 'attack' && !pk.prot ? n.atk : n.api; }
+      var t = pk.prog;
+      var x = from.x + (to.x - from.x) * t, y = from.y + (to.y - from.y) * t;
+      if (!pk.hit && pk.phase === 1 && mode === 'attack' && !pk.prot && pk.prog > 0.4) {
+        pk.hit = true; intercepted++;
+        document.getElementById('d6-intercepted').textContent = intercepted;
+      }
+      if (!pk.hit && pk.phase === 1 && pk.prot && pk.prog > 0.9) {
+        pk.hit = true; protected_count++;
+        document.getElementById('d6-protected').textContent = protected_count;
+      }
+      var col = mode === 'attack' && pk.phase === 1 && !pk.prot ? '#ff4466' : pk.prot ? '#00ff88' : '#00d4ff';
+      ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI * 2);
+      ctx.fillStyle = col + 'cc'; ctx.fill();
+      ctx.beginPath(); ctx.arc(x, y, 10, 0, Math.PI * 2);
+      ctx.fillStyle = col + '22'; ctx.fill();
+    });
+    document.getElementById('d6-packets').textContent = packets.length;
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  document.getElementById('d6-attack').addEventListener('click', function () {
+    mode = 'attack'; document.getElementById('d6-status').textContent = 'COMPROMISED';
+    document.getElementById('d6-status').style.color = '#ff6060';
+  });
+  document.getElementById('d6-protect').addEventListener('click', function () {
+    mode = 'protected'; intercepted = 0;
+    document.getElementById('d6-status').textContent = 'PROTECTED \u03b5-DP';
+    document.getElementById('d6-status').style.color = 'var(--green)';
+    document.getElementById('d6-intercepted').textContent = '0';
+  });
+})();
+
+/* ================================================================
+   DEMO 07 — EEG Neural Fingerprint Shield
+================================================================ */
+(function () {
+  var canvas = document.getElementById('c7');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var W, H;
+  function resize() { W = canvas.width = canvas.offsetWidth; H = canvas.height = 180; }
+  resize();
+  window.addEventListener('resize', resize);
+
+  var masked = false, t = 0, sim = 0.976, eps = 0;
+
+  function eegVal(x, seed, noiseAmp) {
+    var v = Math.sin(x * 0.055 + seed) * 0.4
+           + Math.sin(x * 0.12  + seed * 1.3) * 0.3
+           + Math.sin(x * 0.22  + seed * 0.7) * 0.55
+           + Math.sin(x * 0.42  + seed * 1.7) * 0.18
+           + Math.sin(x * 1.1   + seed * 2.1) * 0.07;
+    var spk = Math.exp(-Math.pow((x % 150 - 75), 2) / 90) * 0.55;
+    var n2 = (Math.sin(x * 8.1 + seed * 5) + Math.sin(x * 14.3 + seed * 3)) * noiseAmp;
+    return (v + spk + n2) * H * 0.16;
+  }
+
+  function drawChannel(ox, cy, seed, color, labelText, noiseAmp) {
+    ctx.beginPath();
+    for (var x = 0; x < W / 2 - 24; x++) {
+      var y = cy + eegVal(x + t, seed, noiseAmp);
+      x === 0 ? ctx.moveTo(ox + x, y) : ctx.lineTo(ox + x, y);
+    }
+    ctx.strokeStyle = color; ctx.lineWidth = 1.7; ctx.stroke();
+    ctx.fillStyle = color + 'aa'; ctx.font = '700 9px Courier New'; ctx.textAlign = 'left';
+    ctx.fillText(labelText, ox + 4, 14);
+  }
+
+  function frame() {
+    t += 1.0;
+    ctx.clearRect(0, 0, W, H);
+    var mid = W / 2, cy = H / 2;
+    ctx.beginPath(); ctx.moveTo(mid, 8); ctx.lineTo(mid, H - 8);
+    ctx.setLineDash([4, 4]); ctx.strokeStyle = 'rgba(255,255,255,0.07)'; ctx.lineWidth = 1; ctx.stroke(); ctx.setLineDash([]);
+
+    drawChannel(12, cy, 1.0, '#00d4ff', 'RAW EEG — Individual Fingerprint', 0.02);
+    var noiseAmp = masked ? 0.6 : 0.02;
+    var rightColor = masked ? '#00ff88' : '#00d4ff';
+    drawChannel(mid + 12, cy, 1.0, rightColor, masked ? 'NeuralMask\u2122 Protected' : 'UNPROTECTED COPY', noiseAmp);
+
+    var target = masked ? 0.022 : 0.976;
+    sim += (target - sim) * 0.04;
+    if (masked && eps < 0.12) eps += 0.001;
+
+    document.getElementById('d7-match').textContent = (sim * 100).toFixed(1) + '%';
+    document.getElementById('d7-match').style.color = masked ? 'var(--green)' : '#ff6060';
+    document.getElementById('d7-eps').textContent = eps.toFixed(3);
+    document.getElementById('d7-right').textContent = masked ? 'NEURAL MASK ACTIVE' : 'UNPROTECTED COPY';
+
+    ctx.fillStyle = masked ? '#00ff88cc' : '#ff6060cc';
+    ctx.font = '700 11px Courier New'; ctx.textAlign = 'center';
+    ctx.fillText((sim * 100).toFixed(1) + '% re-ID match', mid + W / 4, H - 6);
+
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  document.getElementById('d7-toggle').addEventListener('click', function () {
+    masked = !masked;
+    this.textContent = masked ? '\uD83D\uDD13 Disable NeuralMask' : '\uD83D\uDD12 Toggle NeuralMask';
+  });
+})();
+
+/* ================================================================
+   DEMO 08 — Reward Loop Amplification Detector
+================================================================ */
+(function () {
+  var canvas = document.getElementById('c8');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var W, H;
+  function resize() { W = canvas.width = canvas.offsetWidth; H = canvas.height = 260; }
+  resize();
+  window.addEventListener('resize', resize);
+
+  var cycle = 0, gain = 1.0, debt = 0, shielded = false, animT = 0, pulseT = 0;
+  var history = [];
+  var MAX_GAIN = 8.0, MAX_DEBT = 100;
+
+  // Five loop nodes: Neural → Content → Engagement → Measure → Amplify → back
+  function getLoopNodes() {
+    var cx = W / 2, cy = H / 2 - 10, r = Math.min(W, H) * 0.3;
+    var labels = ['Neural\nSignal', 'Content\nSelect', 'Engagement', 'Measure\nState', 'Amplify\nLoop'];
+    var colors = ['#00d4ff', '#7b2fff', '#ffaa40', '#00d4ff', shielded ? '#00ff88' : '#ff4466'];
+    var nodes = [];
+    for (var i = 0; i < 5; i++) {
+      var angle = -Math.PI / 2 + (i / 5) * Math.PI * 2;
+      nodes.push({ x: cx + Math.cos(angle) * r, y: cy + Math.sin(angle) * r, label: labels[i], color: colors[i] });
+    }
+    return nodes;
+  }
+
+  function drawLoop() {
+    ctx.clearRect(0, 0, W, H);
+    var nodes = getLoopNodes();
+
+    // Draw arrows
+    for (var i = 0; i < nodes.length; i++) {
+      var a = nodes[i], b = nodes[(i + 1) % nodes.length];
+      var dx = b.x - a.x, dy = b.y - a.y, len = Math.sqrt(dx * dx + dy * dy);
+      var nx = dx / len, ny = dy / len;
+      var startX = a.x + nx * 20, startY = a.y + ny * 20;
+      var endX = b.x - nx * 22, endY = b.y - ny * 22;
+
+      // Pulse along arrow
+      var pulse = (pulseT / 60 + i / nodes.length) % 1;
+      var px = startX + (endX - startX) * pulse, py = startY + (endY - startY) * pulse;
+      var lineAlpha = Math.min(gain / 4, 0.8);
+      var lineColor = shielded ? '#00ff88' : (i === 4 ? '#ff4466' : '#7b2fff');
+
+      ctx.beginPath(); ctx.moveTo(startX, startY); ctx.lineTo(endX, endY);
+      ctx.strokeStyle = lineColor + Math.round(lineAlpha * 255).toString(16).padStart(2, '0');
+      ctx.lineWidth = 1.5 + Math.min(gain * 0.4, 2); ctx.stroke();
+
+      // Arrowhead
+      var headLen = 8, angle = Math.atan2(endY - startY, endX - startX);
+      ctx.beginPath();
+      ctx.moveTo(endX, endY);
+      ctx.lineTo(endX - headLen * Math.cos(angle - 0.4), endY - headLen * Math.sin(angle - 0.4));
+      ctx.lineTo(endX - headLen * Math.cos(angle + 0.4), endY - headLen * Math.sin(angle + 0.4));
+      ctx.closePath(); ctx.fillStyle = lineColor; ctx.fill();
+
+      // Pulse particle
+      ctx.beginPath(); ctx.arc(px, py, 4 + gain * 0.5, 0, Math.PI * 2);
+      ctx.fillStyle = lineColor + 'cc'; ctx.fill();
+    }
+
+    // Draw nodes
+    nodes.forEach(function (nd) {
+      ctx.beginPath(); ctx.arc(nd.x, nd.y, 19, 0, Math.PI * 2);
+      ctx.fillStyle = nd.color + '22'; ctx.fill();
+      ctx.beginPath(); ctx.arc(nd.x, nd.y, 19, 0, Math.PI * 2);
+      ctx.strokeStyle = nd.color; ctx.lineWidth = 2.5; ctx.stroke();
+      var lines = nd.label.split('\n');
+      ctx.fillStyle = nd.color; ctx.font = '600 8px Courier New'; ctx.textAlign = 'center';
+      lines.forEach(function (ln, li) { ctx.fillText(ln, nd.x, nd.y + (li - (lines.length - 1) / 2) * 11); });
+    });
+
+    // Center: gain display
+    var cx = W / 2, cy = H / 2 - 10;
+    ctx.fillStyle = gain > 4 ? 'rgba(255,68,102,0.15)' : shielded ? 'rgba(0,255,136,0.1)' : 'rgba(123,47,255,0.1)';
+    ctx.beginPath(); ctx.arc(cx, cy, 36, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = gain > 4 ? '#ff8080' : shielded ? '#00ff88' : '#c0a0ff';
+    ctx.font = '700 13px Courier New'; ctx.textAlign = 'center';
+    ctx.fillText(gain.toFixed(2) + 'x', cx, cy + 5);
+
+    // History graph (bottom bar)
+    if (history.length > 1) {
+      var bx = 20, bw = W - 40, bh = 22, by = H - 28;
+      ctx.fillStyle = 'rgba(0,0,0,0.4)';
+      ctx.fillRect(bx, by, bw, bh);
+      ctx.strokeStyle = 'rgba(255,255,255,0.1)'; ctx.lineWidth = 1;
+      ctx.strokeRect(bx, by, bw, bh);
+      ctx.beginPath();
+      history.forEach(function (g, i) {
+        var hx = bx + (i / (Math.max(history.length - 1, 1))) * bw;
+        var hy = by + bh - (g / MAX_GAIN) * bh;
+        i === 0 ? ctx.moveTo(hx, hy) : ctx.lineTo(hx, hy);
+      });
+      ctx.strokeStyle = shielded ? '#00ff88' : '#ffaa40'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.font = '8px Courier New'; ctx.textAlign = 'left';
+      ctx.fillText('Loop gain history', bx + 3, by - 3);
+    }
+
+    pulseT++;
+  }
+
+  (function loop() { drawLoop(); requestAnimationFrame(loop); })();
+
+  function updateStats() {
+    document.getElementById('d8-cycle-num').textContent = cycle;
+    document.getElementById('d8-gain').textContent = gain.toFixed(2) + 'x';
+    document.getElementById('d8-gain').style.color = gain > 4 ? '#ff6060' : gain > 2 ? '#ffaa40' : 'var(--green)';
+    document.getElementById('d8-debt').textContent = Math.round(debt) + '%';
+    document.getElementById('d8-debt').style.color = debt > 60 ? '#ff6060' : debt > 30 ? '#ffaa40' : 'var(--green)';
+    document.getElementById('d8-shield-status').textContent = shielded ? 'ACTIVE' : 'OFF';
+    document.getElementById('d8-shield-status').style.color = shielded ? 'var(--green)' : '#ff6060';
+  }
+
+  document.getElementById('d8-cycle').addEventListener('click', function () {
+    cycle++;
+    var amplification = shielded ? 1.0 + Math.random() * 0.05 : 1.15 + Math.random() * 0.25;
+    gain = Math.min(gain * amplification, MAX_GAIN);
+    debt = Math.min(debt + (shielded ? 0 : gain * 1.8), MAX_DEBT);
+    history.push(gain);
+    if (history.length > 40) history.shift();
+    updateStats();
+  });
+  document.getElementById('d8-shield').addEventListener('click', function () {
+    shielded = !shielded;
+    this.textContent = shielded ? '\u25BC Disable Shield' : '\u25B2 CognitiveShield\u2122';
+    if (shielded) { gain = Math.max(gain * 0.7, 1.0); }
+    updateStats();
+  });
+  document.getElementById('d8-reset').addEventListener('click', function () {
+    cycle = 0; gain = 1.0; debt = 0; shielded = false; history = [];
+    document.getElementById('d8-shield').textContent = '\u25B2 CognitiveShield\u2122';
+    updateStats();
+  });
+  updateStats();
+})();
+
+/* ================================================================
    RESIZE OBSERVER FOR DEMO CANVASES
 ================================================================ */
 (function() {
   if (!window.ResizeObserver) return;
-  const ids = ['c1', 'c2', 'c3', 'c4', 'c5'];
+  const ids = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8'];
   ids.forEach(id => {
     const c = document.getElementById(id);
     if (!c) return;
